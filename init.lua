@@ -1,0 +1,2 @@
+require("fardan")
+print("hello")
