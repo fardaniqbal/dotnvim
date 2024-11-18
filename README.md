@@ -28,3 +28,4 @@ they'll be used if they're installed.
 * [`ripgrep`](https://github.com/BurntSushi/ripgrep) - you'll need this for
   [`telescope's`](https://github.com/nvim-telescope/telescope.nvim)
   `grep-string` (bound to `<leader>ps`) to search for strings.
+* `npm` - you'll need this for some of the language servers.
