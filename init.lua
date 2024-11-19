@@ -10,3 +10,6 @@ elseif (vim.fn.filereadable(vim.fn.expand('~/.vim/vimrc')) ~= 0) then
 end
 
 require("fardan")
+
+-- Uncomment next line to always show error/warning/hint gutter.
+--vim.opt.signcolumn = 'yes:1'
