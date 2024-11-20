@@ -12,4 +12,4 @@ end
 require("fardan")
 
 -- Uncomment next line to always show error/warning/hint gutter.
---vim.opt.signcolumn = 'yes:1'
+vim.opt.signcolumn = 'yes:1'
