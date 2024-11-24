@@ -17,9 +17,6 @@ rm -f ~/.config/nvim
 ln -s ../dotfiles/dotnvim ~/.config/nvim
 ```
 
-After installing the setup, open Neovim and run `:PackerSync` to
-download/update plugins.
-
 ## Optional Components
 
 The following components aren't required for this setup to work, but
@@ -29,3 +26,4 @@ they'll be used if they're installed.
   [`telescope's`](https://github.com/nvim-telescope/telescope.nvim)
   `grep-string` (bound to `<leader>ps`) to search for strings.
 * `npm` - you'll need this for some of the language servers.
+* `make`, `gcc`, and the usual suspects to build optional plugins.
