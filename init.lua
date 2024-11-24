@@ -2,13 +2,13 @@
 
 -- Include vim config from ~/.vimrc or ~/.vim/vimrc if available.  Based on
 -- https://neovim.io/doc/user/nvim.html#nvim-from-vim, translated to Lua.
-vim.opt.runtimepath:prepend({ vim.fn.expand('~/.vim') })
-vim.opt.runtimepath:append({ vim.fn.expand('~/.vim/after') })
-vim.cmd("let &packpath = expand(&runtimepath)")
-if (vim.fn.filereadable(vim.fn.expand('~/.vimrc')) ~= 0) then
-  vim.cmd("source ~/.vimrc")
-elseif (vim.fn.filereadable(vim.fn.expand('~/.vim/vimrc')) ~= 0) then
-  vim.cmd("source ~/.vim/vimrc")
+vim.opt.runtimepath:prepend { vim.fn.expand '~/.vim' }
+vim.opt.runtimepath:append { vim.fn.expand '~/.vim/after' }
+vim.cmd 'let &packpath = expand(&runtimepath)'
+if vim.fn.filereadable(vim.fn.expand '~/.vimrc') ~= 0 then
+  vim.cmd 'source ~/.vimrc'
+elseif vim.fn.filereadable(vim.fn.expand '~/.vim/vimrc') ~= 0 then
+  vim.cmd 'source ~/.vim/vimrc'
 end
 
 -- Set <space> as the leader key
@@ -787,7 +787,20 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = {
+      signs = false, -- show icons in sign column if true
+      gui_style = { fg = 'BOLD', bg = 'NONE' },
+      highlight = {
+        pattern = [[.*<(KEYWORDS)\s*:?]],
+        keyword = 'wide_fg',
+        after = '',
+      },
+    },
+  },
 
   --[[
   { -- Collection of various small independent plugins/modules
