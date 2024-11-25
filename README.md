@@ -12,10 +12,30 @@ cd ~/dotfiles
 git clone --recurse-submodules https://github.com/fardaniqbal/dotnvim
 # Or git clone --recurse-submodules git@github.com:fardaniqbal/dotnvim.git
 # to clone through ssh.
+#
+# !!! Stop here if you're on Windows !!!
+
 mkdir -p ~/.config
 rm -f ~/.config/nvim
 ln -s ../dotfiles/dotnvim ~/.config/nvim
 ```
+
+### Windows Installation
+On Windows you can do the above using Git Bash or MSYS 2, _but with the
+following differences_:
+1.  You must enable _non-admins_ to create symlinks.  See the following for
+    how to do this:
+    - [Enable developer mode](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development)
+    - [Allow non-admins to create symlinks](https://stackoverflow.com/a/76632011)
+    - [Tell git to use symlinks](https://stackoverflow.com/a/59761201)
+2.  The symlinks must be placed under `$LOCALAPPDATA` rather than
+    `~/.config`:
+    ```bash
+    # Do this after following the above installation steps, _but stop after
+    # the`git clone ...` step_:
+    rm -f "$LOCALAPPDATA/nvim"
+    ln -s ~/dotfiles/dotnvim "$LOCALAPPDATA/nvim"
+    ```
 
 ## Optional Components
 
