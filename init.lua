@@ -1,5 +1,6 @@
 -- Based on kickstart.nvim (https://github.com/nvim-lua/kickstart.nvim).
 
+--[[
 -- Include vim config from ~/.vimrc or ~/.vim/vimrc if available.  Based on
 -- https://neovim.io/doc/user/nvim.html#nvim-from-vim, translated to Lua.
 vim.opt.runtimepath:prepend { vim.fn.expand '~/.vim' }
@@ -10,6 +11,7 @@ if vim.fn.filereadable(vim.fn.expand '~/.vimrc') ~= 0 then
 elseif vim.fn.filereadable(vim.fn.expand '~/.vim/vimrc') ~= 0 then
   vim.cmd 'source ~/.vim/vimrc'
 end
+--]]
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -31,8 +33,7 @@ vim.opt.number = true
 --  Experiment for yourself to see if you like it!
 -- vim.opt.relativenumber = true
 
--- Enable mouse mode, can be useful for resizing splits for example!
---vim.opt.mouse = 'a'
+vim.opt.mouse = ''  -- set to 'a' to enable mouse, leave blank to disable
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
@@ -45,25 +46,25 @@ vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
 
--- Enable break indent
-vim.opt.breakindent = true
+-- Misc settings.
+vim.opt.linebreak = true      -- soft-wrap text at word boundaries
+vim.opt.breakindent = true    -- indent soft-wrapped lines to same level as BOL
+vim.opt.sbr = '└─▶︎ '          -- mark soft-wrapped lines with this string
+vim.opt.undofile = false      -- set to true to save undo history
+vim.opt.ignorecase = true     -- ignore case in searches and tags...
+vim.opt.smartcase = true      -- ...unless query has upper-case chars
+vim.opt.history = 200         -- max length of command history
+vim.opt.backup = false        -- disable auto backups
+vim.opt.swapfile = false      -- disable swap files
+vim.opt.signcolumn = 'yes:1'  -- show error gutter by default
+vim.opt.wildignorecase = true -- ignore case when TAB-completing file names
+vim.opt.wildmenu = true       -- show matches for command line TAB-completion
+vim.opt.updatetime = 250      -- decrease update time
+vim.opt.timeoutlen = 300      -- show which-key popup sooner
 
--- Set undofile = true to save undo history
-vim.opt.undofile = false
-
--- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-
--- Keep signcolumn on by default
-vim.opt.signcolumn = 'yes:1'
-
--- Decrease update time
-vim.opt.updatetime = 250
-
--- Decrease mapped sequence wait time
--- Displays which-key popup sooner
-vim.opt.timeoutlen = 300
+-- Hard-wrap to this many cols with `gq` (set to 75 for 80-column terminal
+-- minus 5-column line-number gutter or 0 to disable auto hard-wrap).
+vim.opt.textwidth = 75
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
@@ -73,7 +74,8 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = '» ', trail = '•', nbsp = '␣' }
+vim.cmd "match errorMsg /\\s\\+$/"
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
