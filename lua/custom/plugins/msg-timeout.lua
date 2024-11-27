@@ -11,7 +11,7 @@ vim.api.nvim_create_autocmd({'CursorHold', 'ModeChanged'}, {
     end
     timer = vim.uv.new_timer()
     timer:start(msg_timeout_clear_ms, 0, vim.schedule_wrap(function()
-      print("\n")
+      vim.cmd('echo')
     end))
   end,
   group = general_settings_group,
