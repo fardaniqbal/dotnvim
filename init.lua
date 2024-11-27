@@ -389,7 +389,7 @@ require('lazy').setup({
         theme = 'auto',
         --component_separators = { left = '', right = ''},
         --section_separators = { left = '', right = ''},
-        component_separators = { left = '│', right = '│'},
+        component_separators = { left = '', right = '│'},
         section_separators = { left = ' ', right = ''},
         always_show_tabline = true,
         globalstatus = true,  -- show one statusline for all windows if true
@@ -400,6 +400,7 @@ require('lazy').setup({
         }
       },
       sections = {
+        lualine_c = {'%=', 'filename'},
         lualine_x = {
           {'encoding', show_bomb = true}, -- show_bomb: byte order mark
           {'fileformat', symbols = {unix="unix", dos="dos", mac="mac"}},
