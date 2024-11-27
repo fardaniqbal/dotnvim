@@ -2,6 +2,8 @@
 --   https://github.com/neovim/neovim/issues/16339#issuecomment-1348133829
 -- which was adapted from
 --   https://github.com/ethanholz/nvim-lastplace/blob/main/lua/nvim-lastplace/init.lua
+-- TODO: look into the following.  Might be a better alternative:
+--   https://github.com/farmergreg/vim-lastplace
 local ignore_buftype = { "quickfix", "nofile", "help" }
 local ignore_filetype = { "gitcommit", "gitrebase", "svn", "hgcommit" }
 
