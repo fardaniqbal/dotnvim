@@ -359,6 +359,7 @@ require('lazy').setup({
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
+
   { -- Navigate seamlessly between Vim windows and Tmux panes.  Works best
     -- when the equivalent plugin for Tmux is also installed.
     "christoomey/vim-tmux-navigator",
@@ -375,6 +376,46 @@ require('lazy').setup({
       { "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
       { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
       { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
+    },
+  },
+
+  { -- Custom statusline using lualine.nvim.  For customization options see
+    -- https://github.com/nvim-lualine/lualine.nvim
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {
+      options = {
+        icons_enabled = true,
+        theme = 'auto',
+        --component_separators = { left = '', right = ''},
+        --section_separators = { left = '', right = ''},
+        component_separators = { left = '│', right = '│'},
+        section_separators = { left = ' ', right = ''},
+        always_show_tabline = true,
+        globalstatus = true,  -- show one statusline for all windows if true
+        refresh = {           -- refresh times are in milliseconds
+          statusline = 100,
+          tabline = 100,
+          winbar = 100,
+        }
+      },
+      sections = {
+        lualine_x = {
+          {'encoding', show_bomb = true}, -- show_bomb: byte order mark
+          {'fileformat', symbols = {unix="unix", dos="dos", mac="mac"}},
+          {'filetype', icons_enabled = false},
+        },
+      },
+      --[[ -- inactive_sections is relevant only if globalstatus = false
+      inactive_sections = {
+        lualine_a = {'mode'},                               -- default = {}
+        lualine_b = {'branch', 'diff', 'diagnostics'},      -- default = {}
+        lualine_c = {'filename'},
+        lualine_x = {'encoding', 'fileformat', 'filetype'}, -- defult = {'location'}
+        lualine_y = {'progress'},                           -- default = {}
+        lualine_z = {'location'},                           -- default = {}
+      },
+      --]]
     },
   },
 
