@@ -849,6 +849,21 @@ require('lazy').setup({
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
     end,
+    opts = {
+      styles = {
+        comments = { italic = false },
+        keywords = { italic = false },
+      },
+      --- You can override specific highlights to use other groups or a hex color
+      --- function will be called with a Highlights and ColorScheme table
+      --[[
+      on_highlights = function(hl, colors)
+        hl.Cursor = { guifg = colors.orange, guibg = colors.orange }
+        hl.Cursor2 = { guifg = colors.orange, guibg = colors.orange }
+        hl.TermCursor = { guifg = colors.orange, guibg = colors.orange }
+      end,
+      --]]
+    },
   },
   --]]
   --[[
