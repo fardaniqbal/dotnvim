@@ -419,6 +419,20 @@ require('lazy').setup({
       --]]
     },
   },
+  { -- Change cursorline color based on mode.
+    'mvllow/modes.nvim',
+    tag = 'v0.2.0',
+    config = function()
+      require('modes').setup {
+        -- Set opacity for cursorline and number background
+        line_opacity = {
+          copy = 0.20, delete = 0.20, insert = 0.15, visual = 0.25,
+        },
+        -- Enable line number highlights to match cursorline
+        set_number = false, -- don't make lineno hilight match cursorline
+      }
+    end
+  },
 
   -- LSP Plugins
   {
