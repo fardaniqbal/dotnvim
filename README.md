@@ -44,6 +44,9 @@ they'll be used if they're installed.
 
 * [`ripgrep`](https://github.com/BurntSushi/ripgrep) - you'll need this for
   [`telescope's`](https://github.com/nvim-telescope/telescope.nvim)
-  `grep-string` (bound to `<leader>ps`) to search for strings.
+  `grep-string` (and possibly other telescope functions).
 * `npm` - you'll need this for some of the language servers.
+  - Run `npm install -g neovim`.  If you don't have root/admin access, run
+    `echo "prefix=$HOME/local/npm-packages" >> ~/.npmrc` to make future
+    `npm install -g` commands install npm packages to your home directory.
 * `make`, `gcc`, and the usual suspects to build optional plugins.
