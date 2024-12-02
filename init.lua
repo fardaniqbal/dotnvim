@@ -33,7 +33,7 @@ vim.opt.number = true
 --  Experiment for yourself to see if you like it!
 -- vim.opt.relativenumber = true
 
-vim.opt.mouse = ''  -- set to 'a' to enable mouse, leave blank to disable
+vim.opt.mouse = 'a'   -- set to 'a' to enable mouse, leave blank to disable
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
