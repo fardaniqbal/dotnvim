@@ -13,6 +13,16 @@ vim.keymap.set('n', '<leader>bp', '<cmd>bprevious<CR>', {desc = '[B]uffer [P]rev
 -- Like :bd[elete], but doesn't change the window layout.  Uses blcose.vim.
 vim.keymap.set('n', '<leader>bd', '<cmd>Bclose<CR>', {desc = '[B]uffer [D]elete'})
 
+-- Resize window using <shift> arrow keys.
+vim.keymap.set("n", "<S-Up>", "<cmd>resize +1<cr>", { desc = "Increase Window Height" })
+vim.keymap.set("n", "<S-Down>", "<cmd>resize -1<cr>", { desc = "Decrease Window Height" })
+vim.keymap.set("n", "<S-Left>", "<cmd>vertical resize -1<cr>", { desc = "Decrease Window Width" })
+vim.keymap.set("n", "<S-Right>", "<cmd>vertical resize +1<cr>", { desc = "Increase Window Width" })
+
+-- Move highlighted lines up/down in visual mode.
+vim.keymap.set("v", "J", ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = "Move Lines Down" })
+vim.keymap.set("v", "K", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = "Move Lines Up" })
+
 -- Make vim-tmux-navigator work in Vim's built-in terminal emulator.
 vim.keymap.set('t', '<c-h>', '<cmd>TmuxNavigateLeft<cr>')
 vim.keymap.set('t', '<c-j>', '<cmd>TmuxNavigateDown<cr>')
