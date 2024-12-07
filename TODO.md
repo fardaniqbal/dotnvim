@@ -2,3 +2,5 @@
 - [ ] Auto-refresh neo-tree when files are added/deleted/changed. (Neo-tree
   has a built-in setting for this, but can't remember it).
 - [ ] Add plugin to render Markdown files.
+- [ ] Make tab-completion work in Telescope (at least for file finder)
+- [ ] Add smooth-scrolling plugin
