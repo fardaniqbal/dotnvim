@@ -2,5 +2,7 @@
 return {
   "sphamba/smear-cursor.nvim",
   event = 'UIEnter',
-  opts = {},
+  opts = {
+    enabled = vim.fn.exists('g:neovide') == 0 -- smear is built in to neovide
+  },
 }
