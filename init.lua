@@ -381,46 +381,6 @@ require('lazy').setup({
     },
   },
 
-  { -- Custom statusline using lualine.nvim.  For customization options see
-    -- https://github.com/nvim-lualine/lualine.nvim
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    opts = {
-      options = {
-        icons_enabled = true,
-        theme = 'auto',
-        --component_separators = { left = '', right = ''},
-        --section_separators = { left = '', right = ''},
-        component_separators = { left = '', right = '│'},
-        section_separators = { left = ' ', right = ''},
-        always_show_tabline = true,
-        globalstatus = true,  -- show one statusline for all windows if true
-        refresh = {           -- refresh times are in milliseconds
-          statusline = 100,
-          tabline = 100,
-          winbar = 100,
-        }
-      },
-      sections = {
-        lualine_c = {'%=', 'filename'},
-        lualine_x = {
-          {'encoding', show_bomb = true}, -- show_bomb: byte order mark
-          {'fileformat', symbols = {unix="unix", dos="dos", mac="mac"}},
-          {'filetype', icons_enabled = false},
-        },
-      },
-      --[[ -- inactive_sections is relevant only if globalstatus = false
-      inactive_sections = {
-        lualine_a = {'mode'},                               -- default = {}
-        lualine_b = {'branch', 'diff', 'diagnostics'},      -- default = {}
-        lualine_c = {'filename'},
-        lualine_x = {'encoding', 'fileformat', 'filetype'}, -- defult = {'location'}
-        lualine_y = {'progress'},                           -- default = {}
-        lualine_z = {'location'},                           -- default = {}
-      },
-      --]]
-    },
-  },
   { -- Change cursorline color based on mode.
     'mvllow/modes.nvim',
     tag = 'v0.2.0',
@@ -430,7 +390,7 @@ require('lazy').setup({
         line_opacity = {
           copy = 0.20, delete = 0.20, insert = 0.15, visual = 0.25,
         },
-        -- Enable line number highlights to match cursorline
+        -- Enable/disable line number highlights to match cursorline
         set_number = false, -- don't make lineno hilight match cursorline
       }
     end
