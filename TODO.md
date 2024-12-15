@@ -16,3 +16,5 @@
   https://youtu.be/xdXE1tOT-qg?si=e7tK8mIL9i6L5Hup)
 - [ ] Make <C-E> and <C-Y> scroll Telescope's preview window scrolll
   down/up one line at a time.
+- [ ] Disable NeoTree's "File not in cwd" popup (e.g. when opening NeoTree
+  from a :help buffer).  (Just default to "n" at the prompt).
