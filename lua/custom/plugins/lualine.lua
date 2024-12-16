@@ -20,7 +20,7 @@ return {
       component_separators = { left = '', right = '│'},
       section_separators = { left = ' ', right = ''},
       always_show_tabline = true,
-      globalstatus = true,  -- show one statusline for all windows if true
+      --globalstatus = true,  -- show one statusline for all windows if true
       refresh = {           -- refresh times are in milliseconds
         statusline = 100,
         tabline = 100,

@@ -953,8 +953,15 @@ require('lazy').setup({
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
-  --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  { import = 'custom.plugins' },
+  --  Uncomment the following lines and add your plugins to `lua/custom/plugins/*.lua` to get going.
+  require 'custom.plugins.lastplace',
+  require 'custom.plugins.lualine',
+  require 'custom.plugins.mappings',
+  require 'custom.plugins.msg-timeout',
+  require 'custom.plugins.neoscroll',
+  require 'custom.plugins.smear-cursor',
+  -- Or just do `{ import = 'custom.plugins' }` to load all
+  -- `lua/custom/plugins/*.lua` files in alphabetical order.
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
