@@ -808,7 +808,6 @@ require('lazy').setup({
     end,
   },
 
-  ---[[
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -830,6 +829,13 @@ require('lazy').setup({
         comments = { italic = false },
         keywords = { italic = false },
       },
+
+      --- You can override specific color groups to use other groups or a
+      --- hex color.  Function will be called with a ColorScheme table.
+      ---@class colors ColorScheme
+      on_colors = function(colors)
+        colors.bg = '#1e1c31' -- #1e1c31 is ChallengerDeep's background color
+      end,
       --- You can override specific highlights to use other groups or a hex color
       --- function will be called with a Highlights and ColorScheme table
       --[[
@@ -841,7 +847,7 @@ require('lazy').setup({
       --]]
     },
   },
-  --]]
+
   --[[
   {
     'rebelot/kanagawa.nvim',
