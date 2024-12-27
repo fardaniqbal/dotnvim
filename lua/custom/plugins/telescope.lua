@@ -49,10 +49,10 @@ return {
     -- NOTE: we can alternatively use autocmd UIEnter to set these as
     -- initial settings, but that slows down startup time.
     local get_layout_config = function(_)
-      local results_width_min = 40 -- adjust minimum width of results window
-      local preview_width_min = 75 -- adjust minimum width of preview window
+      local results_width_min = 40  -- adjust minimum width of results window
+      local preview_width_min = 75  -- adjust minimum width of preview window
       local hpad = calc_pad(vim.o.columns, 0.8, results_width_min+preview_width_min, 1)
-      local vpad = calc_pad(vim.o.lines, 0.9, 18, 0)
+      local vpad = calc_pad(vim.o.lines, 0.9, 24, 0)
 
       local layout_config = {
         width = { padding = hpad },
@@ -70,13 +70,14 @@ return {
           -- The flex layout's flip_lines option is more forgiving.
           -- Specifies max number of lines before switching to side
           -- by side (horizontal) results + preview window.
-          flip_lines = 16,
+          flip_lines = 8,
 
           horizontal = {
             preview_width = preview_width_min,
             preview_cutoff = results_width_min + preview_width_min,
           },
           vertical = {
+            preview_height = 0.5,
             preview_cutoff = 8,
           },
         },
