@@ -1,0 +1,213 @@
+-- Fuzzy Finder (files, lsp, etc).
+return {
+  'nvim-telescope/telescope.nvim',
+  event = 'VimEnter',
+  branch = '0.1.x', -- or tag = '0.1.8'
+  dependencies = {
+    'nvim-lua/plenary.nvim',
+    { -- If encountering errors, see telescope-fzf-native README for installation instructions
+      'nvim-telescope/telescope-fzf-native.nvim',
+
+      -- `build` is used to run some command when the plugin is installed/updated.
+      -- This is only run then, not every time Neovim starts up.
+      build = 'make',
+
+      -- `cond` is a condition used to determine whether this plugin should be
+      -- installed and loaded.
+      cond = function()
+        return vim.fn.executable 'make' == 1
+      end,
+    },
+    { 'nvim-telescope/telescope-ui-select.nvim' },
+
+    -- Useful for getting pretty icons, but requires a Nerd Font.
+    { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+  },
+  config = function()
+    -- You can use a custom layout for Telescope windows by defining a
+    -- layout strategy function.  This function must have the signature:
+    -- `function(picker, columns, lines, layout_config)`
+    --
+    -- where the arguments are:
+    --     - picker        : A Picker object.
+    --     - columns       : (number) Columns in the vim window
+    --     - lines         : (number) Lines in the vim window
+    --     - layout_config : (table) Config values specific to the picker
+    --[[
+    require('telescope.pickers.layout_strategies').my_layout_strategy =
+    function(picker, columns, lines, layout_config)
+      local results_width_min = 40 -- adjust minimum width of results window
+      local preview_width_min = 75 -- adjust minimum width of preview window
+      local preview_width_pct = 0.80
+      local v_or_h = 'vertical'
+      if vim.o.columns >= results_width_min+preview_width_min then
+        v_or_h = 'vertical' --'horizontal'
+      end
+      local strats = require('telescope.pickers.layout_strategies')
+      local layout = nil
+      if columns >= layout_config.preview_cutoff then
+        layout = strats.horizontal
+      else
+        layout = strats.vertical
+      end
+      layout = layout(picker, columns, lines, layout_config)
+      -- layout.results.line = layout.results.line - 1
+      -- layout.results.height = layout.results.height + 1
+      -- layout.results.title = ''
+      return layout
+    end
+    --]]
+
+    -- Telescope is a fuzzy finder that comes with a lot of different things that
+    -- it can fuzzy find! It's more than just a "file finder", it can search
+    -- many different aspects of Neovim, your workspace, LSP, and more!
+    --
+    -- The easiest way to use Telescope, is to start by doing something like:
+    --  :Telescope help_tags
+    --
+    -- After running this command, a window will open up and you're able to
+    -- type in the prompt window. You'll see a list of `help_tags` options and
+    -- a corresponding preview of the help.
+    --
+    -- Two important keymaps to use while in Telescope are:
+    --  - Insert mode: <c-/>
+    --  - Normal mode: ?
+    --
+    -- This opens a window that shows you all of the keymaps for the current
+    -- Telescope picker. This is really useful to discover what Telescope can
+    -- do as well as how to actually do it!
+
+    -- [[ Configure Telescope ]]
+    -- See `:help telescope` and `:help telescope.setup()`
+    require('telescope').setup {
+      -- You can put your default mappings / updates / etc. in here
+      --  All the info you're looking for is in `:help telescope.setup()`
+      --
+      defaults = {
+      --   mappings = {
+      --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+      --   },
+
+        --[[ minimal config test
+        layout_strategy = 'flex',
+        layout_config = {
+          width = { padding = 0 },
+          flex = {
+            flip_columns = 75,
+            flip_lines = 20,
+            horizontal = {
+              preview_cutoff = 75, -- must be same as flip_columns
+            },
+            vertical = {
+              preview_cutoff = 21, -- must be same as flip_lines+1
+            },
+          },
+        },
+        --]]
+      },
+      -- pickers = {}
+      extensions = {
+        ['ui-select'] = {
+          require('telescope.themes').get_dropdown(),
+        },
+      },
+    }
+
+    -- Determine amount of horizontal padding for window of the given
+    -- percentage of full Vim window, but at least the given width
+    ---@diagnostic disable-next-line: unused-local
+    local calc_hpad = function(pct, min_width, min_pad)
+      local target_size = vim.o.columns * pct
+      target_size = math.min(vim.o.columns, math.max(target_size, min_width))
+      local pad = min_pad
+      if target_size < vim.o.columns - (pad*2) then
+        pad = math.ceil((vim.o.columns - target_size) / 2)
+      end
+      pad = math.ceil(math.max(min_pad, pad))
+      assert(0 <= pad and pad <= math.ceil(vim.o.columns/2));
+      return pad;
+    end
+
+    -- Change telescope layout based on Vim's window size.
+    vim.api.nvim_create_autocmd({'UIEnter', 'VimEnter', 'VimResized'}, {
+      group = vim.api.nvim_create_augroup('custom-telescope-augroup', { clear = true }),
+      callback = function(_)
+        local results_width_min = 40 -- adjust minimum width of results window
+        local preview_width_min = 75 -- adjust minimum width of preview window
+
+        local hpad = calc_hpad(0.8, results_width_min+preview_width_min, 1)
+        local telescope = require('telescope')
+        telescope.setup {
+          defaults = {
+            path_display = { "truncate", },
+            layout_strategy = 'flex',
+            layout_config = {
+              width = { padding = hpad, },
+              flex = {
+                -- Have to add a hard-coded constant to prevent a deadzone
+                -- where preview window doesn't show.  Likely related to
+                -- https://github.com/nvim-telescope/telescope.nvim/issues/3138
+                --
+                -- FIXME: this hard-coded number seems _extremely_ fragile
+                -- because I found it through trial and error.  Figure out
+                -- what breaks this, then figure out how to fix it.
+                flip_columns = results_width_min + preview_width_min + 6,
+
+                flip_lines = 16,
+
+                horizontal = {
+                  preview_width = preview_width_min,
+                  preview_cutoff = results_width_min + preview_width_min,
+                },
+                vertical = {
+                  preview_cutoff = 20,
+                },
+              },
+            },
+          },
+        }
+        return false -- returning true deletes this autocmd
+      end
+    })
+
+    -- Enable Telescope extensions if they are installed
+    pcall(require('telescope').load_extension, 'fzf')
+    pcall(require('telescope').load_extension, 'ui-select')
+
+    -- See `:help telescope.builtin`
+    local builtin = require 'telescope.builtin'
+    vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+    vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+    vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+    vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+    vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+    vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+    vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+    vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+    vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+    vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+    -- Slightly advanced example of overriding default behavior and theme
+    vim.keymap.set('n', '<leader>//', function()
+      -- You can pass additional configuration to Telescope to change the theme, layout, etc.
+      builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+        winblend = 10,
+        previewer = false,
+      })
+    end, { desc = '[//] Fuzzy search in current buffer' })
+
+    -- It's also possible to pass additional configuration options.
+    --  See `:help telescope.builtin.live_grep()` for information about particular keys
+    vim.keymap.set('n', '<leader>s/', function()
+      builtin.live_grep {
+        grep_open_files = true,
+        prompt_title = 'Live Grep in Open Files',
+      }
+    end, { desc = '[S]earch [/] in Open Files' })
+
+    -- Shortcut for searching your Neovim configuration files
+    vim.keymap.set('n', '<leader>sn', function()
+      builtin.find_files { cwd = vim.fn.stdpath 'config' }
+    end, { desc = '[S]earch [N]eovim files' })
+  end,
+}
