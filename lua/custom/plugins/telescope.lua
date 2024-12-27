@@ -54,6 +54,9 @@ return {
       local hpad = calc_pad(vim.o.columns, 0.8, results_width_min+preview_width_min, 1)
       local vpad = calc_pad(vim.o.lines, 0.9, 24, 0)
 
+      local preview_width =
+        math.ceil(math.max(preview_width_min, (vim.o.columns - (2*hpad)) / 2))
+
       local layout_config = {
         width = { padding = hpad },
         height = { padding = vpad },
@@ -65,7 +68,7 @@ return {
           -- FIXME: this hard-coded number seems _extremely_ fragile
           -- because I found it through trial and error.  Figure out
           -- what breaks this, then figure out how to fix it.
-          flip_columns = results_width_min + preview_width_min + 6,
+          flip_columns = results_width_min + preview_width + 6,
 
           -- The flex layout's flip_lines option is more forgiving.
           -- Specifies max number of lines before switching to side
@@ -73,8 +76,8 @@ return {
           flip_lines = 8,
 
           horizontal = {
-            preview_width = preview_width_min,
-            preview_cutoff = results_width_min + preview_width_min,
+            preview_width = preview_width,
+            preview_cutoff = results_width_min + preview_width,
           },
           vertical = {
             preview_height = 0.5,
