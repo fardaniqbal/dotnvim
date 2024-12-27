@@ -24,39 +24,80 @@ return {
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
   },
   config = function()
-    -- You can use a custom layout for Telescope windows by defining a
-    -- layout strategy function.  This function must have the signature:
-    -- `function(picker, columns, lines, layout_config)`
+    -- Determine amount of padding for window of the given percentage of
+    -- full Vim window win_size, but at least the given min_size.  Param
+    -- win_size must be vim.o.columns (to calculate horizontal padding) or
+    -- vim.o.lines (for vertical padding).
+    local calc_pad = function(win_size, pct, min_size, min_pad)
+      local target_size = win_size * pct
+      target_size = math.min(win_size, math.max(target_size, min_size))
+      local pad = min_pad
+      if target_size < win_size - (pad*2) then
+        pad = math.ceil((win_size - target_size) / 2)
+      end
+      pad = math.ceil(math.max(min_pad, pad))
+      assert(0 <= pad and pad <= math.ceil(win_size/2));
+      return pad;
+    end
+
+    -- !!! Define your default layout_config here !!!
     --
-    -- where the arguments are:
-    --     - picker        : A Picker object.
-    --     - columns       : (number) Columns in the vim window
-    --     - lines         : (number) Lines in the vim window
-    --     - layout_config : (table) Config values specific to the picker
-    --[[
-    require('telescope.pickers.layout_strategies').my_layout_strategy =
-    function(picker, columns, lines, layout_config)
+    -- We're splitting out our custom telescope layout_config settings
+    -- because we want to use these as the initial settings, but we also
+    -- want them to update dynamically with autocmd VimResized.
+    --
+    -- NOTE: we can alternatively use autocmd UIEnter to set these as
+    -- initial settings, but that slows down startup time.
+    local get_layout_config = function(_)
       local results_width_min = 40 -- adjust minimum width of results window
       local preview_width_min = 75 -- adjust minimum width of preview window
-      local preview_width_pct = 0.80
-      local v_or_h = 'vertical'
-      if vim.o.columns >= results_width_min+preview_width_min then
-        v_or_h = 'vertical' --'horizontal'
-      end
-      local strats = require('telescope.pickers.layout_strategies')
-      local layout = nil
-      if columns >= layout_config.preview_cutoff then
-        layout = strats.horizontal
-      else
-        layout = strats.vertical
-      end
-      layout = layout(picker, columns, lines, layout_config)
-      -- layout.results.line = layout.results.line - 1
-      -- layout.results.height = layout.results.height + 1
-      -- layout.results.title = ''
-      return layout
+      local hpad = calc_pad(vim.o.columns, 0.8, results_width_min+preview_width_min, 1)
+      local vpad = calc_pad(vim.o.lines, 0.9, 18, 0)
+
+      local layout_config = {
+        width = { padding = hpad },
+        height = { padding = vpad },
+        flex = {
+          -- Have to add a hard-coded constant to prevent a deadzone
+          -- where preview window doesn't show.  Related to issue:
+          -- https://github.com/nvim-telescope/telescope.nvim/issues/3138
+          --
+          -- FIXME: this hard-coded number seems _extremely_ fragile
+          -- because I found it through trial and error.  Figure out
+          -- what breaks this, then figure out how to fix it.
+          flip_columns = results_width_min + preview_width_min + 6,
+
+          -- The flex layout's flip_lines option is more forgiving.
+          -- Specifies max number of lines before switching to side
+          -- by side (horizontal) results + preview window.
+          flip_lines = 16,
+
+          horizontal = {
+            preview_width = preview_width_min,
+            preview_cutoff = results_width_min + preview_width_min,
+          },
+          vertical = {
+            preview_cutoff = 8,
+          },
+        },
+      }
+      return layout_config
     end
-    --]]
+
+    -- Change telescope layout based on Vim's window size.
+    vim.api.nvim_create_autocmd({--[['UIEnter',--]] 'VimResized'}, {
+      group = vim.api.nvim_create_augroup('custom-telescope-augroup', { clear = true }),
+      callback = function(event)
+        require('telescope').setup {
+          defaults = {
+            path_display = { "truncate", },
+            layout_strategy = 'flex',
+            layout_config = get_layout_config(event),
+          },
+        }
+        return false -- returning true deletes this autocmd
+      end
+    })
 
     -- Telescope is a fuzzy finder that comes with a lot of different things that
     -- it can fuzzy find! It's more than just a "file finder", it can search
@@ -87,6 +128,9 @@ return {
       --   mappings = {
       --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
       --   },
+        path_display = { "truncate", },
+        layout_strategy = 'flex',
+        layout_config = get_layout_config(nil),
 
         --[[ minimal config test
         layout_strategy = 'flex',
@@ -112,65 +156,6 @@ return {
         },
       },
     }
-
-    -- Determine amount of horizontal padding for window of the given
-    -- percentage of full Vim window, but at least the given width
-    ---@diagnostic disable-next-line: unused-local
-    local calc_hpad = function(pct, min_width, min_pad)
-      local target_size = vim.o.columns * pct
-      target_size = math.min(vim.o.columns, math.max(target_size, min_width))
-      local pad = min_pad
-      if target_size < vim.o.columns - (pad*2) then
-        pad = math.ceil((vim.o.columns - target_size) / 2)
-      end
-      pad = math.ceil(math.max(min_pad, pad))
-      assert(0 <= pad and pad <= math.ceil(vim.o.columns/2));
-      return pad;
-    end
-
-    -- Change telescope layout based on Vim's window size.
-    vim.api.nvim_create_autocmd({'UIEnter', 'VimResized'}, {
-      group = vim.api.nvim_create_augroup('custom-telescope-augroup', { clear = true }),
-      callback = function(_)
-        local results_width_min = 40 -- adjust minimum width of results window
-        local preview_width_min = 75 -- adjust minimum width of preview window
-        local hpad = calc_hpad(0.8, results_width_min+preview_width_min, 1)
-
-        require('telescope').setup {
-          defaults = {
-            path_display = { "truncate", },
-            layout_strategy = 'flex',
-            layout_config = {
-              width = { padding = hpad, },
-              flex = {
-                -- Have to add a hard-coded constant to prevent a deadzone
-                -- where preview window doesn't show.  Related to issue:
-                -- https://github.com/nvim-telescope/telescope.nvim/issues/3138
-                --
-                -- FIXME: this hard-coded number seems _extremely_ fragile
-                -- because I found it through trial and error.  Figure out
-                -- what breaks this, then figure out how to fix it.
-                flip_columns = results_width_min + preview_width_min + 6,
-
-                -- The flex layout's flip_lines option is more forgiving.
-                -- Specifies max number of lines before switching to side
-                -- by side (horizontal) results + preview window.
-                flip_lines = 16,
-
-                horizontal = {
-                  preview_width = preview_width_min,
-                  preview_cutoff = results_width_min + preview_width_min,
-                },
-                vertical = {
-                  preview_cutoff = 20,
-                },
-              },
-            },
-          },
-        }
-        return false -- returning true deletes this autocmd
-      end
-    })
 
     -- Enable Telescope extensions if they are installed
     pcall(require('telescope').load_extension, 'fzf')
