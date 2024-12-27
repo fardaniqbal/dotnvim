@@ -129,15 +129,14 @@ return {
     end
 
     -- Change telescope layout based on Vim's window size.
-    vim.api.nvim_create_autocmd({'UIEnter', 'VimEnter', 'VimResized'}, {
+    vim.api.nvim_create_autocmd({'UIEnter', 'VimResized'}, {
       group = vim.api.nvim_create_augroup('custom-telescope-augroup', { clear = true }),
       callback = function(_)
         local results_width_min = 40 -- adjust minimum width of results window
         local preview_width_min = 75 -- adjust minimum width of preview window
-
         local hpad = calc_hpad(0.8, results_width_min+preview_width_min, 1)
-        local telescope = require('telescope')
-        telescope.setup {
+
+        require('telescope').setup {
           defaults = {
             path_display = { "truncate", },
             layout_strategy = 'flex',
@@ -145,7 +144,7 @@ return {
               width = { padding = hpad, },
               flex = {
                 -- Have to add a hard-coded constant to prevent a deadzone
-                -- where preview window doesn't show.  Likely related to
+                -- where preview window doesn't show.  Related to issue:
                 -- https://github.com/nvim-telescope/telescope.nvim/issues/3138
                 --
                 -- FIXME: this hard-coded number seems _extremely_ fragile
@@ -153,6 +152,9 @@ return {
                 -- what breaks this, then figure out how to fix it.
                 flip_columns = results_width_min + preview_width_min + 6,
 
+                -- The flex layout's flip_lines option is more forgiving.
+                -- Specifies max number of lines before switching to side
+                -- by side (horizontal) results + preview window.
                 flip_lines = 16,
 
                 horizontal = {
