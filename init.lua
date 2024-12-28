@@ -637,7 +637,8 @@ require('lazy').setup({
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
 
-        -- Make it easier to distinguish completion popup menus from buffer text.
+        -- Make it easier to distinguish completion popup menus from buffer
+        -- text.  See https://github.com/hrsh7th/nvim-cmp/discussions/1200
         window = {
           completion = {
             border = "rounded",
