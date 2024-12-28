@@ -18,7 +18,7 @@
   https://youtu.be/xdXE1tOT-qg?si=e7tK8mIL9i6L5Hup)
 - [ ] Make \<C-E\> and \<C-Y\> scroll Telescope's preview window scroll
   down/up one line at a time.
-- [ ] Disable NeoTree's "File not in cwd" popup (e.g. when opening NeoTree
+- [x] Disable NeoTree's "File not in cwd" popup (e.g. when opening NeoTree
   from a :help buffer).  (Just default to "n" at the prompt).
 - [x] For completion popup menus and inline code hints, change their
   background color and/or add a border to make it easier to visually

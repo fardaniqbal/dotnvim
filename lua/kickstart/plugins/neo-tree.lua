@@ -12,7 +12,7 @@ return {
   },
   cmd = 'Neotree',
   keys = {
-    { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '\\', ':Neotree<CR>', desc = 'NeoTree reveal', silent = true },
   },
 
   -- Based on "Quickstart" sample from neo-tree's GitHub page:
