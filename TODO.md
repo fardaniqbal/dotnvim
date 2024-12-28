@@ -1,5 +1,7 @@
-- [ ] Automatically go into insert mode when entering a terminal window.
-- [ ] Disable line numbers and sign column in terminal windows.
+- [ ] Set up dadbod and related plugins for interactive SQL.
+  - See TJ DeVries' video: https://youtu.be/ALGBuFLzDSA?si=ugl13sHmgF5FKLhI
+- [x] Automatically go into insert mode when entering a terminal window.
+- [x] Disable line numbers and sign column in terminal windows.
 - [ ] Set up Java LSP.
 - [ ] Auto-refresh neo-tree when files are added/deleted/changed. (Neo-tree
   has a built-in setting for this, but can't remember it).
