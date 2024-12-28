@@ -13,8 +13,9 @@ return {
         -- HACK: change scope highlight color by just setting it to another
         -- highlight group.  Definitely NOT the right way to do this, but I
         -- have bigger fish to fry.
-        highlight = {'diffLine'}
+        highlight = {'diffLine'},
       },
+      indent = { char = '│' }, -- default guide is too thick/distracting
     },
   },
 }

@@ -1,5 +1,6 @@
 - [ ] Set up dadbod and related plugins for interactive SQL.
   - See TJ DeVries' video: https://youtu.be/ALGBuFLzDSA?si=ugl13sHmgF5FKLhI
+- [ ] Set up a greeter/dashboard.
 - [x] Automatically go into insert mode when entering a terminal window.
 - [x] Disable line numbers and sign column in terminal windows.
 - [ ] Set up Java LSP.
@@ -8,7 +9,7 @@
 - [ ] Add plugin to render Markdown files.
 - [ ] Make tab-completion work in Telescope (at least for file finder)
 - [ ] Add smooth-scrolling plugin
-- [ ] Make indent-blankline's vertical bars more subtle.  Defaults are too
+- [x] Make indent-blankline's vertical bars more subtle.  Defaults are too
   distracting.
 - [ ] Change window border colors to be more visible.  Tokyonight's window
   borders are too dark to see against a dark background.
