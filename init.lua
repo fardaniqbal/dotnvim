@@ -637,6 +637,18 @@ require('lazy').setup({
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
 
+        -- Make it easier to distinguish completion popup menus from buffer text.
+        window = {
+          completion = {
+            border = "rounded",
+            winhighlight = "Normal:Pmenu",
+          },
+          documentation = {
+            border = "rounded",
+            winhighlight = "Normal:Pmenu",
+          }
+        },
+
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
         --
