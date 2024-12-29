@@ -17,8 +17,8 @@
 - [ ] Make Telescope's file list show file names before directory names.
 - [ ] Make Telescope use fzf (see beginning of
   https://youtu.be/xdXE1tOT-qg?si=e7tK8mIL9i6L5Hup)
-- [ ] Make \<C-E\> and \<C-Y\> scroll Telescope's preview window scroll
-  down/up one line at a time.
+- [x] Make ~~\<C-E\> and \<C-Y\>~~ \<C-D\> and \<C-U\> scroll Telescope's
+  preview window scroll down/up one line at a time.
 - [x] Disable NeoTree's "File not in cwd" popup (e.g. when opening NeoTree
   from a :help buffer).  (Just default to "n" at the prompt).
 - [x] For completion popup menus and inline code hints, change their

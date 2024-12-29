@@ -60,6 +60,7 @@ return {
       local layout_config = {
         width = { padding = hpad },
         height = { padding = vpad },
+        scroll_speed = 2,
         flex = {
           -- Have to add a hard-coded constant to prevent a deadzone
           -- where preview window doesn't show.  Related to issue:
