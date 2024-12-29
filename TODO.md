@@ -21,6 +21,8 @@
   preview window scroll down/up one line at a time.
 - [x] Disable NeoTree's "File not in cwd" popup (e.g. when opening NeoTree
   from a :help buffer).  (Just default to "n" at the prompt).
+  - **Fix:** change neo-tree's keybind command from `:Neotree reveal` to
+    `:Neotree`, and enable `follow_current_file`.
 - [x] For completion popup menus and inline code hints, change their
   background color and/or add a border to make it easier to visually
   distinguish them from actual buffer contents.
