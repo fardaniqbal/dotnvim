@@ -62,6 +62,14 @@ vim.opt.wildmenu = true       -- show matches for command line TAB-completion
 vim.opt.updatetime = 250      -- decrease update time
 vim.opt.timeoutlen = 300      -- show which-key popup sooner
 
+-- Tab/indent settings.
+vim.opt.expandtab = true  -- spaces, not tabs (<ctrl-v TAB> inserts real tab)
+vim.opt.shiftwidth = 2    -- number of spaces to use for each step of indent
+vim.opt.softtabstop = 2   -- number of spaces to insert when hitting TAB
+vim.opt.tabstop = 8       -- real tab characters will be displayed as this wide
+vim.opt.copyindent = true -- use indents from existing line for new indents
+vim.opt.pi = true         -- try to preserve existing indents on autoindent
+
 -- Hard-wrap to this many cols with `gq` (set to 75 for 80-column terminal
 -- minus 5-column line-number gutter or 0 to disable auto hard-wrap).
 vim.opt.textwidth = 75
@@ -283,7 +291,7 @@ require('lazy').setup({
       require('modes').setup {
         -- Set opacity for cursorline and number background
         line_opacity = {
-          copy = 0.20, delete = 0.20, insert = 0.15, visual = 0.25,
+          copy = 0.20, delete = 0.20, insert = 0.15, visual = 0.30,
         },
         -- Enable/disable line number highlights to match cursorline
         set_number = false, -- don't make lineno hilight match cursorline
