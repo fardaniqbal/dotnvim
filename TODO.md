@@ -11,6 +11,8 @@
 - [ ] Add smooth-scrolling plugin
 - [x] Make indent-blankline's vertical bars more subtle.  Defaults are too
   distracting.
+- [ ] Replace nvim-cmp with blink, which should be snappier.  Nvim-cmp has
+  considerable input latency.
 - [ ] Change window border colors to be more visible.  Tokyonight's window
   borders are too dark to see against a dark background.
 - [x] Make Telescope window's left pane narrower and preview pane wider.
