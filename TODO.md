@@ -1,3 +1,5 @@
+- [ ] Make telescope include hidden files in its search results by default.
+  Something like `require("telescope.builtin").find_files({hidden=true})`.
 - [ ] Set up dadbod and related plugins for interactive SQL.
   - See TJ DeVries' video: https://youtu.be/ALGBuFLzDSA?si=ugl13sHmgF5FKLhI
 - [ ] Set up a greeter/dashboard.
