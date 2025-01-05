@@ -16,6 +16,8 @@
   distracting.
 - [ ] Replace nvim-cmp with blink, which should be snappier.  Nvim-cmp has
   considerable input latency.
+  - **[blink.cmp](https://github.com/Saghen/blink.cmp) is in beta (as of
+    2024-12-05).**  Don't replace nvim-cmp until blink is stable.
 - [x] Change window border colors to be more visible.  Tokyonight's window
   borders are too dark to see against a dark background.
   - [ ] FIXME: the related changes to hide neo-tree's border changes window
