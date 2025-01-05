@@ -1,3 +1,4 @@
+- [ ] (Ongoing): continue to improve startup times with lazy loading.
 - [ ] Make telescope include hidden files in its search results by default.
   Something like `require("telescope.builtin").find_files({hidden=true})`.
 - [ ] Set up dadbod and related plugins for interactive SQL.
@@ -17,6 +18,9 @@
   considerable input latency.
 - [x] Change window border colors to be more visible.  Tokyonight's window
   borders are too dark to see against a dark background.
+  - [ ] FIXME: the related changes to hide neo-tree's border changes window
+    background of files opened from neo-tree.  Fix it so files have the
+    expected window background color.
 - [x] Make Telescope window's left pane narrower and preview pane wider.
 - [ ] Make Telescope's file list show file names before directory names.
 - [ ] Make Telescope use fzf (see beginning of
