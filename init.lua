@@ -719,6 +719,14 @@ require('lazy').setup({
           -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
+        --[[
+        experimental = {
+          -- Show completion as ghost text as you type.
+          -- WARNING: this conflicts with copilot.vim's preview, so disable
+          -- if you use copilot.vim.
+          ghost_text = true,
+        },
+        --]]
         sources = {
           {
             name = 'lazydev',
@@ -879,7 +887,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
