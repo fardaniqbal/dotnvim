@@ -676,8 +676,8 @@ require('lazy').setup({
           ['<Up>'] = cmp.mapping.select_prev_item(),
 
           -- Scroll the documentation window [b]ack / [f]orward
-          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-b>'] = cmp.mapping.scroll_docs(-2),
+          ['<C-f>'] = cmp.mapping.scroll_docs(2),
 
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
@@ -703,16 +703,18 @@ require('lazy').setup({
           --
           -- <c-l> will move you to the right of each of the expansion locations.
           -- <c-h> is similar, except moving you backwards.
-          --['<C-l>'] = cmp.mapping(function()
-          --  if luasnip.expand_or_locally_jumpable() then
-          --    luasnip.expand_or_jump()
-          --  end
-          --end, { 'i', 's' }),
-          --['<C-h>'] = cmp.mapping(function()
-          --  if luasnip.locally_jumpable(-1) then
-          --    luasnip.jump(-1)
-          --  end
-          --end, { 'i', 's' }),
+          -- NOTE: this overrides vim-tmux-navigator's default keybinds
+          -- _only in i or s mode when completion is active_.
+          ['<C-l>'] = cmp.mapping(function()
+            if luasnip.expand_or_locally_jumpable() then
+              luasnip.expand_or_jump()
+            end
+          end, { 'i', 's' }),
+          ['<C-h>'] = cmp.mapping(function()
+            if luasnip.locally_jumpable(-1) then
+              luasnip.jump(-1)
+            end
+          end, { 'i', 's' }),
 
           -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
