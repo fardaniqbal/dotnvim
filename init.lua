@@ -757,7 +757,9 @@ require('lazy').setup({
       --- hex color.  Function will be called with a ColorScheme table.
       ---@class colors ColorScheme
       on_colors = function(colors)
+        local util = require("tokyonight.util")
         colors.bg = '#1e1c31' -- #1e1c31 is ChallengerDeep's background color
+        colors.border = util.lighten(colors.bg, 0.85) -- split window border color
       end,
       --- You can override specific highlights to use other groups or a hex color
       --- function will be called with a Highlights and ColorScheme table

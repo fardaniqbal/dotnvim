@@ -290,6 +290,23 @@ return {
           },
         },
       },
+      event_handlers = {
+        { -- Hide border for neo-tree sidebar.  See :help neo-tree-events.
+          -- FIXME: rightmost column still shows horizontal border when
+          -- laststatus=3 (i.e. global statusline).
+          event = "neo_tree_buffer_enter",
+          handler = function()
+            -- Create new highlight group for neo-tree window split.
+            vim.api.nvim_set_hl(0, 'CustomNeoTreeBorderHL', {
+              fg = vim.api.nvim_get_hl(0, {name="NeoTreeNormal"}).bg,
+              bg = vim.api.nvim_get_hl(0, {name="NeoTreeNormal"}).bg,
+            })
+            --vim.opt_local.fillchars = { vert='█', vertleft='█', vertright='█', verthoriz='█' }
+            --vim.cmd [[ setlocal winhighlight+=WinSeparator:NeoTreeNormal ]]
+            vim.cmd [[ setlocal winhighlight+=WinSeparator:CustomNeoTreeBorderHL ]]
+          end
+        },
+      },
     }
 
     --vim.cmd [[nnoremap \ :Neotree reveal<cr>]]

@@ -15,7 +15,7 @@
   distracting.
 - [ ] Replace nvim-cmp with blink, which should be snappier.  Nvim-cmp has
   considerable input latency.
-- [ ] Change window border colors to be more visible.  Tokyonight's window
+- [x] Change window border colors to be more visible.  Tokyonight's window
   borders are too dark to see against a dark background.
 - [x] Make Telescope window's left pane narrower and preview pane wider.
 - [ ] Make Telescope's file list show file names before directory names.
