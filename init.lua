@@ -337,6 +337,12 @@ require('lazy').setup({
         'j-hui/fidget.nvim', opts = {
           notification = {
             override_vim_notify = true, -- override default vim.notify()
+            window = {
+              border = 'rounded', -- default 'none'
+              relative = 'win',   -- show notifications relative to split
+              winblend = 0,       -- otherwise underlying text shows through
+              normal_hl = 'NormalNC',
+            },
           }
         }
       },
