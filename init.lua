@@ -341,7 +341,7 @@ require('lazy').setup({
               border = 'rounded', -- default 'none'
               relative = 'win',   -- show notifications relative to split
               winblend = 0,       -- otherwise underlying text shows through
-              --normal_hl = 'NormalNC', -- default 'Comment'
+              normal_hl = 'NormalFloat',
             },
           }
         }
