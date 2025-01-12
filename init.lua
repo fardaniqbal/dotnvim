@@ -60,7 +60,7 @@ vim.opt.signcolumn = 'yes:1'  -- show error gutter by default
 vim.opt.wildignorecase = true -- ignore case when TAB-completing file names
 vim.opt.wildmenu = true       -- show matches for command line TAB-completion
 vim.opt.updatetime = 250      -- decrease update time
-vim.opt.timeoutlen = 300      -- show which-key popup sooner
+vim.opt.timeoutlen = 300      -- wait this many milliseconds for key sequence
 
 -- Tab/indent settings.
 vim.opt.expandtab = true  -- spaces, not tabs (<ctrl-v TAB> inserts real tab)
@@ -212,6 +212,7 @@ require('lazy').setup({
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     dependencies = {{ 'echasnovski/mini.icons', version = '*' }},
     opts = {
+      delay = 16, -- milliseconds between key press and opening which-key
       icons = {
         -- set icon mappings to true if you have a Nerd Font
         mappings = vim.g.have_nerd_font,
