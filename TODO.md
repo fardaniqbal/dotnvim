@@ -8,7 +8,29 @@
 - [x] Disable line numbers and sign column in terminal windows.
 - [ ] Set up Java LSP.
 - [ ] Auto-refresh neo-tree when files are added/deleted/changed. (Neo-tree
-  has a built-in setting for this, but can't remember it).
+  has a built-in setting for this called `use_libuv_file_watcher`).
+- [ ] FIXME: when opening a file from neo-tree with its preview mode
+  enabled (SHIFT-P), the window in which the file opens has the same
+  background color as neo-tree instead of the normal window background.
+  Steps to reproduce:
+  1.  Start nvim as follows:
+      ```bash
+      cd ~/dotfiles
+      nvim dotnvim/init.lua
+      ```
+  2.  Hit backslash to open neo-tree.
+  3.  Hit SHIFT-P to enable preview mode.
+  4.  Select `ginit.nvim` in neo-tree and hit ENTER to open it.
+      - NOTE: bug is not visible yet.
+  5.  Hit backslash again to go back to neo-tree window.
+  6.  Hit SHIFT-P to enable preview mode.
+  7.  Select `README.md` in neo-tree and hit ENTER to open it.
+      - `README.md` opens in a window with same background color as
+        neo-tree instead of the expected background color.
+  **NOTE**: I first noticed this bug when I added an `event_handler` to
+  `neo-tree.lua` to hide the border on neo-tree's sidebar.  Don't know if
+  that's the cause of the bug, or if that's just when I noticed it, but
+  it's probbly a good place to investigate.
 - [ ] Add plugin to render Markdown files.
 - [ ] Make tab-completion work in Telescope (at least for file finder)
 - [ ] Add smooth-scrolling plugin
