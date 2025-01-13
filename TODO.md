@@ -27,10 +27,13 @@
   7.  Select `README.md` in neo-tree and hit ENTER to open it.
       - `README.md` opens in a window with same background color as
         neo-tree instead of the expected background color.
-  **NOTE**: I first noticed this bug when I added an `event_handler` to
-  `neo-tree.lua` to hide the border on neo-tree's sidebar.  Don't know if
-  that's the cause of the bug, or if that's just when I noticed it, but
-  it's probbly a good place to investigate.
+  - **NOTES:**
+    - I first noticed this bug when I added an `event_handler` to
+      `neo-tree.lua` to hide the border on neo-tree's sidebar.  Don't know
+      if that's the cause of the bug, or if that's just when I noticed it,
+      but it's probbly a good place to investigate.
+    - Additionally, the sign gutter is missing on the window with the wrong
+      background color.  Might be a clue.
 - [ ] Add plugin to render Markdown files.
 - [ ] Make tab-completion work in Telescope (at least for file finder)
 - [ ] Add smooth-scrolling plugin
