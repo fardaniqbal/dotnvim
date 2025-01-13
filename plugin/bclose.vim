@@ -2,7 +2,7 @@
 " https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
 " (alt url: http://vim.wikia.com/wiki/VimTip165)
 
-" Command ':Bclose' executes ':bd' to delete the buffer in current window.
+" Command ':Bclose' executes ':bw' to delete the buffer in current window.
 " All windows showing the current buffer will show the alternate buffer
 " (Ctrl-^) if it exists, or the previous buffer (:bp), or a blank buffer if
 " no previous.
@@ -29,7 +29,7 @@ function s:Bclose(kwbdStage)
     endif
   endif
   if(!buflisted(winbufnr(0)))
-    bd!
+    bw!
     return
   endif
   let s:kwbdBufNum = bufnr("%")
@@ -63,7 +63,7 @@ function s:Bclose(kwbdStage)
     execute s:kwbdWinNum . 'wincmd w'
   endif
   if(buflisted(s:kwbdBufNum) || s:kwbdBufNum == bufnr("%"))
-    execute "bd! " . s:kwbdBufNum
+    execute "bw! " . s:kwbdBufNum
   endif
   if(!s:buflistedLeft)
     set buflisted
