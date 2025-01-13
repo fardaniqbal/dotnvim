@@ -50,3 +50,10 @@ they'll be used if they're installed.
     `echo "prefix=$HOME/local/npm-packages" >> ~/.npmrc` to make future
     `npm install -g` commands install npm packages to your home directory.
 * `make`, `gcc`, and the usual suspects to build optional plugins.
+* For Java integration, you'll need the following executables installed:
+  `java`, `javac`, `mvn`, `ant`, etc.  For example, on MacOS using `brew`:
+  ```bash
+  brew install oracle-jdk
+  brew install mvn
+  brew install ant
+  ```
