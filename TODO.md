@@ -1,4 +1,6 @@
 - [ ] (Ongoing): continue to improve startup times with lazy loading.
+- [ ] Make `Telescope buffers` (`<leader><leader>`) open with the current
+  buffer selected.
 - [ ] Make telescope include hidden files in its search results by default.
   Something like `require("telescope.builtin").find_files({hidden=true})`.
 - [ ] Set up dadbod and related plugins for interactive SQL.
