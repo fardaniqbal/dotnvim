@@ -49,7 +49,7 @@
     2024-12-05).**  Don't replace nvim-cmp until blink is stable.
 - [x] Change window border colors to be more visible.  Tokyonight's window
   borders are too dark to see against a dark background.
-  - [ ] FIXME: the related changes to hide neo-tree's border changes window
+  - [x] FIXME: the related changes to hide neo-tree's border changes window
     background of files opened from neo-tree.  Fix it so files have the
     expected window background color.
 - [x] Make Telescope window's left pane narrower and preview pane wider.
