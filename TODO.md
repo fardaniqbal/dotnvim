@@ -11,7 +11,7 @@
 - [ ] Set up Java LSP.
 - [ ] Auto-refresh neo-tree when files are added/deleted/changed. (Neo-tree
   has a built-in setting for this called `use_libuv_file_watcher`).
-- [ ] FIXME: when opening a file from neo-tree with its preview mode
+- [x] FIXME: when opening a file from neo-tree with its preview mode
   enabled (SHIFT-P), the window in which the file opens has the same
   background color as neo-tree instead of the normal window background.
   Steps to reproduce:
@@ -36,6 +36,8 @@
       but it's probbly a good place to investigate.
     - Additionally, the sign gutter is missing on the window with the wrong
       background color.  Might be a clue.
+  - **FIXED** in commit
+    [cf9a5eb](https://github.com/nvim-neo-tree/neo-tree.nvim/commit/cf9a5eb0c49b57385af7abf8463eb75013759eee)
 - [ ] Add plugin to render Markdown files.
 - [ ] Make tab-completion work in Telescope (at least for file finder)
 - [ ] Add smooth-scrolling plugin
