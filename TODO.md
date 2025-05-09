@@ -1,4 +1,5 @@
 - [ ] (Ongoing): continue to improve startup times with lazy loading.
+- [ ] lualine: disable status line on greeter screen.
 - [ ] Make `Telescope buffers` (`<leader><leader>`) open with the current
   buffer selected.
 - [ ] Make telescope include hidden files in its search results by default.
@@ -53,6 +54,8 @@
     background of files opened from neo-tree.  Fix it so files have the
     expected window background color.
 - [x] Make Telescope window's left pane narrower and preview pane wider.
+- [ ] Make Telescope always show a horizontal split unless nvim window is
+  _really_ wide.
 - [ ] Make Telescope's file list show file names before directory names.
 - [ ] Make Telescope use fzf (see beginning of
   https://youtu.be/xdXE1tOT-qg?si=e7tK8mIL9i6L5Hup)
