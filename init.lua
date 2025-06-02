@@ -94,6 +94,11 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 2
 
+-- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),Add commentMore actions
+-- instead raise a dialog asking if you wish to save the current file(s)
+-- See `:help 'confirm'`
+vim.opt.confirm = true
+
 -- For terminal windows, automatically go into insert mode and hide line
 -- numbers and signcolumn since they're not very useful there.
 vim.cmd "autocmd TermOpen * startinsert | set nonumber | set signcolumn=no"
