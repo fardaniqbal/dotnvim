@@ -341,7 +341,7 @@ require('lazy').setup({
             override_vim_notify = true, -- override default vim.notify()
             window = {
               border = 'rounded', -- default 'none'
-              relative = 'win',   -- show notifications relative to split
+              --relative = 'win',   -- show notifications relative to split
               winblend = 0,       -- otherwise underlying text shows through
               normal_hl = 'NormalFloat',
             },
