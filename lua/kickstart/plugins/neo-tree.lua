@@ -10,7 +10,7 @@ return {
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
   },
-  cmd = 'Neotree',
+  lazy = false, -- lazy must be false for netrw hijack to work on startup
   keys = {
     { '\\', ':Neotree<CR>', desc = 'NeoTree reveal', silent = true },
   },
