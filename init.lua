@@ -3,8 +3,8 @@
 --[[
 -- Include vim config from ~/.vimrc or ~/.vim/vimrc if available.  Based on
 -- https://neovim.io/doc/user/nvim.html#nvim-from-vim, translated to Lua.
-vim.opt.runtimepath:prepend { vim.fn.expand '~/.vim' }
-vim.opt.runtimepath:append { vim.fn.expand '~/.vim/after' }
+vim.o.runtimepath:prepend { vim.fn.expand '~/.vim' }
+vim.o.runtimepath:append { vim.fn.expand '~/.vim/after' }
 vim.cmd 'let &packpath = expand(&runtimepath)'
 if vim.fn.filereadable(vim.fn.expand '~/.vimrc') ~= 0 then
   vim.cmd 'source ~/.vimrc'
@@ -23,81 +23,86 @@ vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
--- See `:help vim.opt`
+-- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
 -- Make line numbers default
-vim.opt.number = true
+vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+-- vim.o.relativenumber = true
 
-vim.opt.mouse = 'a'   -- set to 'a' to enable mouse, leave blank to disable
+vim.o.mouse = 'a'   -- set to 'a' to enable mouse, leave blank to disable
 
 -- Don't show the mode, since it's already in the status line
-vim.opt.showmode = false
+vim.o.showmode = false
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
+  vim.o.clipboard = 'unnamedplus'
 end)
 
 -- Misc settings.
-vim.opt.linebreak = true      -- soft-wrap text at word boundaries
-vim.opt.breakindent = true    -- indent soft-wrapped lines to same level as BOL
-vim.opt.sbr = '└─▶︎ '          -- mark soft-wrapped lines with this string
-vim.opt.undofile = false      -- set to true to save undo history
-vim.opt.ignorecase = true     -- ignore case in searches and tags...
-vim.opt.smartcase = true      -- ...unless query has upper-case chars
-vim.opt.history = 200         -- max length of command history
-vim.opt.backup = false        -- disable auto backups
-vim.opt.swapfile = false      -- disable swap files
-vim.opt.signcolumn = 'yes:1'  -- show error gutter by default
-vim.opt.wildignorecase = true -- ignore case when TAB-completing file names
-vim.opt.wildmenu = true       -- show matches for command line TAB-completion
-vim.opt.updatetime = 250      -- decrease update time
-vim.opt.timeoutlen = 300      -- wait this many milliseconds for key sequence
+vim.o.linebreak = true      -- soft-wrap text at word boundaries
+vim.o.breakindent = true    -- indent soft-wrapped lines to same level as BOL
+vim.o.sbr = '└─▶︎ '          -- mark soft-wrapped lines with this string
+vim.o.undofile = false      -- set to true to save undo history
+vim.o.ignorecase = true     -- ignore case in searches and tags...
+vim.o.smartcase = true      -- ...unless query has upper-case chars
+vim.o.history = 200         -- max length of command history
+vim.o.backup = false        -- disable auto backups
+vim.o.swapfile = false      -- disable swap files
+vim.o.signcolumn = 'yes:1'  -- show error gutter by default
+vim.o.wildignorecase = true -- ignore case when TAB-completing file names
+vim.o.wildmenu = true       -- show matches for command line TAB-completion
+vim.o.updatetime = 250      -- decrease update time
+vim.o.timeoutlen = 300      -- wait this many milliseconds for key sequence
 
 -- Tab/indent settings.
-vim.opt.expandtab = true  -- spaces, not tabs (<ctrl-v TAB> inserts real tab)
-vim.opt.shiftwidth = 2    -- number of spaces to use for each step of indent
-vim.opt.softtabstop = 2   -- number of spaces to insert when hitting TAB
-vim.opt.tabstop = 8       -- real tab characters will be displayed as this wide
-vim.opt.copyindent = true -- use indents from existing line for new indents
-vim.opt.pi = true         -- try to preserve existing indents on autoindent
+vim.o.expandtab = true  -- spaces, not tabs (<ctrl-v TAB> inserts real tab)
+vim.o.shiftwidth = 2    -- number of spaces to use for each step of indent
+vim.o.softtabstop = 2   -- number of spaces to insert when hitting TAB
+vim.o.tabstop = 8       -- real tab characters will be displayed as this wide
+vim.o.copyindent = true -- use indents from existing line for new indents
+vim.o.pi = true         -- try to preserve existing indents on autoindent
 
 -- Hard-wrap to this many cols with `gq` (set to 75 for 80-column terminal
 -- minus 5-column line-number gutter or 0 to disable auto hard-wrap).
-vim.opt.textwidth = 75
+vim.o.textwidth = 75
 
 -- Configure how new splits should be opened
-vim.opt.splitright = true
-vim.opt.splitbelow = true
+vim.o.splitright = true
+vim.o.splitbelow = true
 
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
-vim.opt.list = true
+--
+--  Notice listchars is set using `vim.opt` instead of `vim.o`.
+--  It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
+--   See `:help lua-options`
+--   and `:help lua-options-guide`
+vim.o.list = true
 vim.opt.listchars = { tab = '» ', trail = '•', nbsp = '␣' }
 vim.cmd "match errorMsg /\\s\\+$/"
 
 -- Preview substitutions live, as you type!
-vim.opt.inccommand = 'split'
+vim.o.inccommand = 'split'
 
 -- Show which line your cursor is on.  Can spike CPU on older versions!
-vim.opt.cursorline = true
+vim.o.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 2
+vim.o.scrolloff = 2
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),Add commentMore actions
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
-vim.opt.confirm = true
+vim.o.confirm = true
 
 -- For terminal windows, automatically go into insert mode and hide line
 -- numbers and signcolumn since they're not very useful there.
@@ -160,8 +165,11 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   if vim.v.shell_error ~= 0 then
     error('Error cloning lazy.nvim:\n' .. out)
   end
-end ---@diagnostic disable-next-line: undefined-field
-vim.opt.rtp:prepend(lazypath)
+end
+
+---@type vim.Option
+local rtp = vim.opt.rtp
+rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
 --
