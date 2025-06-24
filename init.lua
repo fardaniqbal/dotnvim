@@ -334,6 +334,13 @@ require('lazy').setup({
       'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
+      -- nvim-java is a convenient wrapper around jdtls that includes
+      -- things like spring-boot-tools, lombok, etc.  The plugin's repo
+      -- has a convenient link to see the diff between the base NeoVim
+      -- Kickstart setup and what you have to change to setup nvim-java:
+      -- https://github.com/nvim-lua/kickstart.nvim/compare/master...nvim-java:starter-kickstart:master
+      'nvim-java/nvim-java',
+
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       {
@@ -441,7 +448,7 @@ require('lazy').setup({
           local function client_supports_method(client, method, bufnr)
             if vim.fn.has 'nvim-0.11' == 1 then
               return client:supports_method(method, bufnr)
-            else
+            else ---@diagnostic disable-next-line: param-type-mismatch
               return client.supports_method(method, { bufnr = bufnr })
             end
           end
@@ -540,7 +547,7 @@ require('lazy').setup({
                 callSnippet = 'Replace',
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
+              diagnostics = { disable = { 'missing-fields' } },
             },
           },
         },
@@ -568,6 +575,7 @@ require('lazy').setup({
       require('mason-lspconfig').setup {
         ensure_installed = {},          -- disable warning (default value is {})
         automatic_installation = false, -- disable warning (default value is false)
+        automatic_enable = { exclude = { --[[ disable specific languages here --]] } },
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
@@ -576,6 +584,18 @@ require('lazy').setup({
             -- certain features of an LSP (for example, turning off formatting for ts_ls)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
+          end,
+
+          -- Setup nvim-java.  See https://github.com/nvim-java/nvim-java
+          -- for general documentation.  For diff with base Kickstart, see
+          -- https://github.com/nvim-lua/kickstart.nvim/compare/master...nvim-java:starter-kickstart:master
+          jdtls = function()
+            require('java').setup {
+              -- Your custom jdtls settings goes here
+            }
+            require('lspconfig').jdtls.setup {
+              -- Your custom nvim-java configuration goes here
+            }
           end,
         },
       }
