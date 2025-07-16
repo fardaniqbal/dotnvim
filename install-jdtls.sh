@@ -84,7 +84,7 @@ if $have_wget; then
   wget_works=true
 fi
 if (! $wget_works) && $have_curl; then
-  download() { curl -O -k --proxy-insecure "$*"; }
+  download() { curl -k --proxy-insecure "$*"; }
   jdtls_archive="$(download "$JDTLS_DOWNLOAD_BASE_URL/$JDTLS_VERSION/latest.txt")" &&
   curl_works=true
 fi
