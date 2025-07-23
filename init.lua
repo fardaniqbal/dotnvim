@@ -161,6 +161,17 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Customize LSP hover window.
+local my_lsp_buf_hover = vim.lsp.buf.hover
+---@diagnostic disable-next-line: duplicate-set-field
+vim.lsp.buf.hover = function(config)
+  return my_lsp_buf_hover(vim.tbl_deep_extend('force', {
+    -- See `:h vim.lsp.util.open_floating_preview.Opts`
+    -- and `:h vim.lsp.buf.hover.Opts` for available options
+    border = 'rounded',
+  }, config or {}))
+end
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
