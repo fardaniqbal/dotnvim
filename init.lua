@@ -330,15 +330,15 @@ require('lazy').setup({
 
   { -- Change cursorline color based on mode.
     'mvllow/modes.nvim',
-    tag = 'v0.2.0',
+    tag = 'v0.2.1',
     config = function()
       require('modes').setup {
         -- Set opacity for cursorline and number background
         line_opacity = {
           copy = 0.20, delete = 0.20, insert = 0.15, visual = 0.30,
         },
-        -- Enable/disable line number highlights to match cursorline
         set_number = false, -- don't make lineno hilight match cursorline
+        set_signcolumn = false, -- don't extend line hilight to sign column
       }
     end
   },
