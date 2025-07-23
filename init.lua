@@ -366,13 +366,6 @@ require('lazy').setup({
       'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
-      -- nvim-java is a convenient wrapper around jdtls that includes
-      -- things like spring-boot-tools, lombok, etc.  The plugin's repo
-      -- has a convenient link to see the diff between the base NeoVim
-      -- Kickstart setup and what you have to change to setup nvim-java:
-      -- https://github.com/nvim-lua/kickstart.nvim/compare/master...nvim-java:starter-kickstart:master
-      'nvim-java/nvim-java',
-
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       {
@@ -600,6 +593,10 @@ require('lazy').setup({
         rust_analyzer = {},
         ts_ls = {},
 
+        -- FIXME: do we need jdtls here?  Or are we correctly specifying a
+        -- custom JDTLS install in lua/custom/plugins/nvim-jdtls.lua?
+        jdtls = {},
+
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -647,18 +644,6 @@ require('lazy').setup({
             -- certain features of an LSP (for example, turning off formatting for ts_ls)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
-          end,
-
-          -- Setup nvim-java.  See https://github.com/nvim-java/nvim-java
-          -- for general documentation.  For diff with base Kickstart, see
-          -- https://github.com/nvim-lua/kickstart.nvim/compare/master...nvim-java:starter-kickstart:master
-          jdtls = function()
-            require('java').setup {
-              -- Your custom jdtls settings goes here
-            }
-            require('lspconfig').jdtls.setup {
-              -- Your custom nvim-java configuration goes here
-            }
           end,
         },
       }
@@ -990,6 +975,7 @@ require('lazy').setup({
   require 'custom.plugins.msg-timeout',
   require 'custom.plugins.neoscroll',
   require 'custom.plugins.smear-cursor',
+  require 'custom.plugins.nvim-jdtls',
   -- Or just do `{ import = 'custom.plugins' }` to load all
   -- `lua/custom/plugins/*.lua` files in alphabetical order.
   --

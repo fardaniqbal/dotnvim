@@ -57,3 +57,6 @@ they'll be used if they're installed.
   brew install mvn
   brew install ant
   ```
+  You'll also need JDTLS (Java language server).  Run the included
+  [`install-jdtls.sh`](install-jdtls.sh) script included in this repo to
+  install it.
