@@ -2,6 +2,9 @@
 -- Config roughly based on nvim-jdtls sample configurations:
 -- https://github.com/mfussenegger/nvim-jdtls/wiki/Sample-Configurations
 
+-- Table maps project directories to their cached workspace names.
+local workspace_cache = {}
+
 return {
   'mfussenegger/nvim-jdtls',
   lazy = true,
@@ -23,7 +26,10 @@ return {
 
     -- File types that signify a Java project's root directory.  This
     -- will be used by jdtls to determine what constitutes a workspace.
-    local root_markers = {'gradlew', 'mvnw', 'build.xml', 'ant', '.git'}
+    -- TODO: need better logic for this.  Some of our projects have their
+    -- build.xml files under an `ant` directory.
+    local root_markers = {'gradlew', 'pom.xml', 'mvnw', 'build.xml', 'ant', '.git'}
+    --local root_markers = {'gradlew', 'mvnw', '.git'}
     local root_dir = require('jdtls.setup').find_root(root_markers)
 
     -- eclipse.jdt.ls stores project specific data within a folder.
@@ -32,7 +38,15 @@ return {
     -- is used to configure eclipse to use the directory name of
     -- the current project found using the "root_marker" as the
     -- folder for project specific data.
-    local workspace_folder = home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
+    local proj_dir = vim.fn.fnamemodify(root_dir, ":p")
+    if workspace_cache[proj_dir] == nil then
+      -- Generate a short but unique folder for this project based on its
+      -- absolute path.
+      workspace_cache[proj_dir] = home .. "/.local/share/eclipse/" ..
+        vim.fn.fnamemodify(root_dir, ":p:h:t") .. '-' ..
+        require('lib.md5.md5').sumhexa(proj_dir)
+    end
+    local workspace_folder = workspace_cache[proj_dir]
 
     local config = {
       cmd = {
@@ -43,10 +57,13 @@ return {
 
       -- TODO: need better logic for this.  Some of our projects have their
       -- build.xml files under an `ant` directory.
+      --[[
       root_dir = vim.fs.dirname(vim.fs.find(
           { 'gradlew', 'pom.xml', 'build.xml', '.git', 'mvnw' },
           { upward = true }
       )[1]),
+      --]]
+      root_dir = root_dir,
 
       -- Here you can configure eclipse.jdt.ls specific settings
       -- For list of options see
