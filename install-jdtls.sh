@@ -12,6 +12,8 @@ else
   install_prefix="$HOME/local/jdtls"
 fi
 
+err() { printf "%s\n" "$self: $*" >&2; exit 1; }
+
 # Get comand-line args.
 while [ $# -gt 0 ]; do
   arg="$2"
