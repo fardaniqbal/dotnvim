@@ -983,7 +983,7 @@ require('lazy').setup({
   require 'custom.plugins.lastplace',
   require 'custom.plugins.lualine',
   require 'custom.plugins.mappings',
-  require 'custom.plugins.msg-timeout',
+  --require 'custom.plugins.msg-timeout',
   require 'custom.plugins.neoscroll',
   require 'custom.plugins.smear-cursor',
   require 'custom.plugins.nvim-jdtls',
