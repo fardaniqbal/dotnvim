@@ -762,7 +762,7 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        preset = 'super-tab',
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:Add commentMore actions
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
       },
