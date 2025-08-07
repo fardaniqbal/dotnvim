@@ -24,10 +24,15 @@ local function get_jdtls()
   local jdtls_path = get_mason_package_install_path("jdtls")
   -- Obtain the path to the jar which runs the language server
   local launcher = vim.fn.glob(jdtls_path .. "/plugins/org.eclipse.equinox.launcher_*.jar")
-   -- Declare white operating system we are using, windows use win, macos use mac
-  local SYSTEM = "linux"
+  -- Declare which operating system we are using.
+  local osname = "linux"
+  if vim.fn.has('win32') ~= 0 then
+    osname = "win"
+  elseif vim.fn.has('mac') ~= 0 then
+    osname = "mac"
+  end
   -- Obtain the path to configuration files for your specific operating system
-  local config = jdtls_path .. "/config_" .. SYSTEM
+  local config = jdtls_path .. "/config_" .. osname
   -- Obtain the path to the Lomboc jar
   local lombok = jdtls_path .. "/lombok.jar"
   return launcher, config, lombok
@@ -65,16 +70,20 @@ local function get_bundles()
   return bundles
 end
 
-local function get_workspace()
-  -- Get the home directory of your operating system
-  local home = os.getenv "HOME"
-  -- Declare a directory where you would like to store project information
-  local workspace_path = home .. "/code/workspace/"
-  -- Determine the project name
-  local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
-  -- Create the workspace directory by concatenating the designated workspace path and the project name
-  local workspace_dir = workspace_path .. project_name
-  return workspace_dir
+-- Table maps project directories to their cached workspace names.
+local workspace_cache = {}
+
+local function get_workspace(root_dir)
+  local proj_dir = vim.fn.fnamemodify(root_dir, ":p")
+  if workspace_cache[proj_dir] == nil then
+    -- Generate a short but unique folder for this project based on its
+    -- absolute path.
+    local home = os.getenv('USERPROFILE') or os.getenv('HOME')
+    workspace_cache[proj_dir] = home .. "/.local/cache/jdtls-workspace/" ..
+        vim.fn.fnamemodify(root_dir, ":p:h:t") .. '-' ..
+        require('lib.md5.md5').sumhexa(proj_dir)
+  end
+  return workspace_cache[proj_dir]
 end
 
 local function java_keymaps()
@@ -114,16 +123,26 @@ local function setup_jdtls()
   -- Get the paths to the jdtls jar, operating specific configuration directory, and lombok jar
   local launcher, os_config, lombok = get_jdtls()
 
-  -- Get the path you specified to hold project information
-  local workspace_dir = get_workspace()
-
   -- Get the bundles list with the jars to the debug adapter, and testing adapters
   local bundles = get_bundles()
 
-  -- Determine the root directory of the project by looking for these specific markers
-  local root_dir = jdtls.setup.find_root({ '.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle' });
+  -- Determine the root directory of the project by looking for these
+  -- specific markers. This will be used by jdtls to determine what
+  -- constitutes a workspace. TODO: need better logic for this.  Some of
+  -- our projects have their build.xml files under an `ant` directory.
+  --[[
+  root_dir = vim.fs.dirname(vim.fs.find(
+      { 'gradlew', 'pom.xml', 'build.xml', '.git', 'mvnw' },
+      { upward = true }
+  )[1]),
+  --]]
+  local root_markers = { 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', '.git', 'build.xml' }
+  local root_dir = jdtls.setup.find_root(root_markers);
 
-  -- Tell our JDTLS language features it is capable of
+  -- Get the path you specified to hold project information
+  local workspace_dir = get_workspace(root_dir)
+
+  -- Tell JDTLS which language features it is capable of
   local capabilities = {
     workspace = {
       configuration = true
@@ -347,181 +366,7 @@ local function setup_jdtls()
   require('jdtls').start_or_attach(config)
 end
 
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
-
--- Table maps project directories to their cached workspace names.
-local workspace_cache = {}
-
-local M = {
-  'mfussenegger/nvim-jdtls',
-  dependencies = { "mfussenegger/nvim-dap", },
-  lazy = true,
-  ft = { 'java' },
-
-  config = function()
-
-    local ospath = function(path) return path end
-
-    -- Adjust behavior on Windows.  XXX: %USERPROFILE% may not be
-    -- set depending on how MSYS2 is configured.
-    if vim.fn.has('win32') ~= 0 then
-      ospath = function(path) return path.gsub('/', '\\') end
-    end
-
-    -- The below setup is (roughly) based on this guide:
-    -- https://sookocheff.com/post/vim/neovim-java-ide/
-    local home = ospath(os.getenv('USERPROFILE') or os.getenv('HOME'))
-
-    -- File types that signify a Java project's root directory.  This
-    -- will be used by jdtls to determine what constitutes a workspace.
-    -- TODO: need better logic for this.  Some of our projects have their
-    -- build.xml files under an `ant` directory.
-    local root_markers = {'gradlew', 'pom.xml', 'mvnw', 'build.xml', 'ant', '.git'}
-    --local root_markers = {'gradlew', 'mvnw', '.git'}
-    local root_dir = require('jdtls.setup').find_root(root_markers)
-
-    -- eclipse.jdt.ls stores project specific data within a folder.
-    -- If you are working with multiple different projects, each
-    -- project must use a dedicated data directory. This variable
-    -- is used to configure eclipse to use the directory name of
-    -- the current project found using the "root_marker" as the
-    -- folder for project specific data.
-    local proj_dir = vim.fn.fnamemodify(root_dir, ":p")
-    if workspace_cache[proj_dir] == nil then
-      -- Generate a short but unique folder for this project based on its
-      -- absolute path.
-      workspace_cache[proj_dir] = home .. "/.local/share/eclipse/" ..
-        vim.fn.fnamemodify(root_dir, ":p:h:t") .. '-' ..
-        require('lib.md5.md5').sumhexa(proj_dir)
-    end
-    local workspace_folder = workspace_cache[proj_dir]
-
-    local config = {
-      cmd = {
-        --'java',
-        (os.getenv('USERPROFILE') or os.getenv('HOME')) .. '/local/jdtls/bin/jdtls',
-        '-data', workspace_folder,
-      },
-
-      -- TODO: need better logic for this.  Some of our projects have their
-      -- build.xml files under an `ant` directory.
-      --[[
-      root_dir = vim.fs.dirname(vim.fs.find(
-          { 'gradlew', 'pom.xml', 'build.xml', '.git', 'mvnw' },
-          { upward = true }
-      )[1]),
-      --]]
-      root_dir = root_dir,
-
-      -- Here you can configure eclipse.jdt.ls specific settings
-      -- For list of options see
-      -- https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
-      settings = {
-        java = {
-          signatureHelp = { enabled = true };
-          contentProvider = { preferred = 'fernflower' };
-
-          completion = {
-            favoriteStaticMembers = {
-              "org.hamcrest.MatcherAssert.assertThat",
-              "org.hamcrest.Matchers.*",
-              "org.hamcrest.CoreMatchers.*",
-              "org.junit.jupiter.api.Assertions.*",
-              "java.util.Objects.requireNonNull",
-              "java.util.Objects.requireNonNullElse",
-              "org.mockito.Mockito.*"
-            },
-            filteredTypes = {
-              "com.sun.*",
-              "io.micrometer.shaded.*",
-              "java.awt.*",
-              "jdk.*",
-              "sun.*",
-            },
-          };
-
-          sources = {
-            organizeImports = {
-              starThreshold = 9999;
-              staticStarThreshold = 9999;
-            };
-          };
-
-          codeGeneration = {
-            toString = {
-              template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"
-            },
-            hashCodeEquals = {
-              useJava7Objects = true,
-            },
-            useBlocks = true,
-          };
-
-          configuration = {
-            -- XXX: `name` items in the `runtimes` map _are not arbitrary_.
-            -- Their names are semantically significant to JDTLS.
-            --
-            -- XXX: `path` items in the `runtimes` map are system-specific!
-            -- !!! They specify directories where each JDK is installed !!!
-            -- This will, of course, vary based on your local dev setup.
-            --
-            -- This necessarily involves dirty hacks where we set up each
-            -- `path` item on a case-by-case basis.  TODO: come up with
-            -- said dirty hacks for the systems I use.
-            runtimes = {
-              {
-                name = "JavaSE-1.8",
-                --path = "/usr/lib/jvm/java-8-openjdk/",
-                path = "/usr/lib/jvm/java-8-openjdk-amd64/",
-              },
-              --[[
-              {
-                name = "JavaSE-11",
-                path = "/usr/lib/jvm/java-11-openjdk/",
-              },
-              {
-                name = "JavaSE-16",
-                path = home .. "/.local/jdks/jdk-16.0.1+9/",
-              },
-              {
-                name = "JavaSE-17",
-                path = home .. "/.local/jdks/jdk-17.0.2+8/",
-              },
-              --]]
-            }
-          };
-        }
-      },
-    }
-
-    -- This starts a new client & server,
-    -- or attaches to an existing client & server depending on the `root_dir`.
-    require("jdtls").start_or_attach(config)
-  end
-}
-
---return M
-
 return {
-  --[[
-  {
-    dependencies = {
-      {
-        "jay-babu/mason-nvim-dap.nvim",
-        opts = {
-          ensure_installed = { "java-debug-adapter", "java-test" }
-        }
-      },
-    },
-  },
-  --]]
-
-  --{
     'mfussenegger/nvim-jdtls',
     lazy = true,
     ft = { 'java' },
@@ -530,11 +375,10 @@ return {
       "mfussenegger/nvim-dap",
     },
     config = function()
-        -- ensure the java debug adapter is installed
-        require("mason-nvim-dap").setup({
-          ensure_installed = { "javadbg", "javatest" }
-        })
+      -- ensure the java debug adapter is installed
+      require("mason-nvim-dap").setup({
+        ensure_installed = { "javadbg", "javatest" }
+      })
       setup_jdtls()
     end,
-  --},
 }
