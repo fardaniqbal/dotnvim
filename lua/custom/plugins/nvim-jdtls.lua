@@ -22,7 +22,7 @@ end
 
 local function get_jdtls()
   local jdtls_path = get_mason_package_install_path("jdtls")
-  -- Obtain the path to the jar which runs the language server
+  -- Get the path to the jar which runs the language server.
   local launcher = vim.fn.glob(jdtls_path .. "/plugins/org.eclipse.equinox.launcher_*.jar")
   -- Declare which operating system we are using.
   local osname = "linux"
@@ -31,20 +31,15 @@ local function get_jdtls()
   elseif vim.fn.has('mac') ~= 0 then
     osname = "mac"
   end
-  -- Obtain the path to configuration files for your specific operating system
+  -- Get os-specific config path.
   local config = jdtls_path .. "/config_" .. osname
-  -- Obtain the path to the Lomboc jar
+  -- Get path to the Lombok jar.
   local lombok = jdtls_path .. "/lombok.jar"
   return launcher, config, lombok
 end
 
 local function get_bundles()
-  -- -- Get the Mason Registry to gain access to downloaded binaries
-  -- local mason_registry = require("mason-registry")
-  -- -- Find the Java Debug Adapter package in the Mason Registry
-  -- local java_debug = mason_registry.get_package("java-debug-adapter")
-  -- -- Obtain the full path to the directory where Mason has downloaded the Java Debug Adapter binaries
-  -- local java_debug_path = java_debug:get_install_path()
+  -- Get full path to the Java Debug Adapter binaries downloaded by Mason.
   local java_debug_path = get_mason_package_install_path("java-debug-adapter")
 
   local bundles = {
@@ -59,12 +54,9 @@ local function get_bundles()
       1)
   }
 
-  -- Find the Java Test package in the Mason Registry
-  -- local java_test = mason_registry.get_package("java-test")
-  -- Obtain the full path to the directory where Mason has downloaded the Java Test binaries
-  -- local java_test_path = java_test:get_install_path()
+  -- Find the Java Test package in the Mason Registry.
   local java_test_path = get_mason_package_install_path('java-test')
-  -- Add all of the Jars for running tests in debug mode to the bundles list
+  -- Add all jars for running tests in debug mode to the bundles list.
   vim.list_extend(bundles, vim.split(vim.fn.glob(java_test_path .. "/extension/server/*.jar", 1), "\n"))
 
   return bundles
@@ -117,13 +109,13 @@ local function java_keymaps()
 end
 
 local function setup_jdtls()
-  -- Get access to the jdtls plugin and all of its functionality
+  -- Get access to the jdtls plugin and all of its functionality.
   local jdtls = require "jdtls"
 
-  -- Get the paths to the jdtls jar, operating specific configuration directory, and lombok jar
+  -- Get the paths to jdtls jar, os-specific config dir, and lombok jar.
   local launcher, os_config, lombok = get_jdtls()
 
-  -- Get the bundles list with the jars to the debug adapter, and testing adapters
+  -- Get bundles list with jars to the debug adapter and testing adapters.
   local bundles = get_bundles()
 
   -- Determine the root directory of the project by looking for these
@@ -139,10 +131,10 @@ local function setup_jdtls()
   local root_markers = { 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', '.git', 'build.xml' }
   local root_dir = jdtls.setup.find_root(root_markers);
 
-  -- Get the path you specified to hold project information
+  -- Get the path you specified to hold project information.
   local workspace_dir = get_workspace(root_dir)
 
-  -- Tell JDTLS which language features it is capable of
+  -- Tell JDTLS which language features it is capable of.
   local capabilities = {
     workspace = {
       configuration = true
@@ -158,12 +150,11 @@ local function setup_jdtls()
 
   for k,v in pairs(lsp_capabilities) do capabilities[k] = v end
 
-  -- Get the default extended client capablities of the JDTLS language server
+  -- Modify extended client capabilities of JDTLS.
   local extendedClientCapabilities = jdtls.extendedClientCapabilities
-  -- Modify one property called resolveAdditionalTextEditsSupport and set it to true
   extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 
-  -- Set the command that starts the JDTLS language server jar
+  -- Set the command that starts JDTLS.
   local cmd = {
     'java',
     '-Declipse.application=org.eclipse.jdt.ls.core.id1',
@@ -184,41 +175,42 @@ local function setup_jdtls()
     workspace_dir
   }
 
-   -- Configure settings in the JDTLS server
+   -- Configure settings in the JDTLS server.
   local settings = {
     java = {
-      -- Enable code formatting
+      -- Enable code formatting.
       format = {
         enabled = true,
-        -- Use the Google Style guide for code formattingh
+        -- Use the Google Style guide for code formatting.
         settings = {
           url = vim.fn.stdpath("config") .. "/lang_servers/intellij-java-google-style.xml",
           profile = "GoogleStyle"
         }
       },
-      -- Enable downloading archives from eclipse automatically
+      -- Enable downloading archives from eclipse automatically.
       eclipse = {
-        downloadSource = true
+        downloadSources = true
       },
-      -- Enable downloading archives from maven automatically
+      -- Enable downloading archives from maven automatically.
       maven = {
         downloadSources = true
       },
-      -- Enable method signature help
+      -- Enable method signature help.
       signatureHelp = {
         enabled = true
       },
-      -- Use the fernflower decompiler when using the javap command to decompile byte code back to java code
+      -- Use the fernflower decompiler when using the javap command to
+      -- decompile JVM byte code back to Java source code.
       contentProvider = {
         preferred = "fernflower"
       },
-      -- Setup automatical package import oranization on file save
+      -- Setup automatical package import oranization on file save.
       saveActions = {
         organizeImports = false
       },
       -- Customize completion options
       completion = {
-        -- When using an unimported static method, how should the LSP rank possible places to import the static method from
+        -- How JDTLS should rank import suggestions for static methods.
         favoriteStaticMembers = {
           "org.hamcrest.MatcherAssert.assertThat",
           "org.hamcrest.Matchers.*",
@@ -228,7 +220,7 @@ local function setup_jdtls()
           "java.util.Objects.requireNonNullElse",
           "org.mockito.Mockito.*",
         },
-        -- Try not to suggest imports from these packages in the code action window
+        -- Try not to suggest imports from these packages in code actions.
         filteredTypes = {
           "com.sun.*",
           "io.micrometer.shaded.*",
@@ -236,7 +228,7 @@ local function setup_jdtls()
           "jdk.*",
           "sun.*",
         },
-        -- Set the order in which the language server should organize imports
+        -- Order in which the language server should organize imports.
         importOrder = {
           "java",
           "jakarta",
@@ -246,7 +238,8 @@ local function setup_jdtls()
         }
       },
       sources = {
-        -- How many classes from a specific package should be imported before automatic imports combine them all into a single import
+        -- How many classes from a specific package should be imported
+        -- before automatic imports combine them all into a single import.
         organizeImports = {
           starThreshold = 9999,
           staticThreshold = 9999
@@ -254,34 +247,35 @@ local function setup_jdtls()
       },
       -- How should different pieces of code be generated?
       codeGeneration = {
-        -- When generating toString use a json format
+        -- Make generated toString() use json format.
         toString = {
           template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"
         },
-        -- When generating hashCode and equals methods use the java 7 objects method
+        -- Make generated hashCode()/equals() use Java 7 objects method.
         hashCodeEquals = {
           useJava7Objects = true
         },
-        -- When generating code use code blocks
+        -- Make generated code use code blocks.
         useBlocks = true
       },
-      -- enable code lens in the lsp
+      -- Enable code lens.
+      implementationsCodeLens = {
+        enabled = true,
+      },
       referencesCodeLens = {
         enabled = true
       },
-      -- enable inlay hints for parameter names,
+      -- Enable inlay hints for parameter names.
       inlayHints = {
         parameterNames = {
           enabled = "all"
         }
       },
-      -- If changes to the project will require the developer to update the projects configuration advise the developer before accepting the change
+      -- If changes to the project will require the developer to update the
+      -- project config, advise the developer before accepting the change.
       configuration = {
         updateBuildConfiguration = "interactive",
 
-        -- XXX: `name` items in the `runtimes` map _are not arbitrary_.
-        -- Their names are semantically significant to JDTLS.
-        --
         -- XXX: `path` items in the `runtimes` map are system-specific!
         -- !!! They specify directories where each JDK is installed !!!
         -- This will, of course, vary based on your local dev setup.
@@ -290,6 +284,31 @@ local function setup_jdtls()
         -- `path` item on a case-by-case basis.  TODO: come up with
         -- said dirty hacks for the systems I use.
         runtimes = {
+          -- XXX: `name` fields are _not_ arbitrary.  Must match one of the
+          -- execution environments here:
+          -- https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
+          --
+          -- JDTLS will choose what runtime to use based on config found in
+          -- your project's pom.xml or build.gradle file.  E.g., for maven:
+          --   <properties>
+          --     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+          --     <maven.compiler.source>11</maven.compiler.source>
+          --     <maven.compiler.target>11</maven.compiler.target>
+          --   </properties>
+          --[[
+          {
+            name = "J2SE-1.5",
+            path = "TODO",
+          },
+          {
+            name = "JavaSE-1.6",
+            path = "TODO",
+          },
+          {
+            name = "JavaSE-1.7",
+            path = "TODO",
+          },
+          --]]
           {
             name = "JavaSE-1.8",
             --path = "/usr/lib/jvm/java-8-openjdk/",
@@ -297,8 +316,32 @@ local function setup_jdtls()
           },
           --[[
           {
+            name = "JavaSE-9",
+            path = "TODO",
+          },
+          {
+            name = "JavaSE-10",
+            path = "TODO",
+          },
+          {
             name = "JavaSE-11",
             path = "/usr/lib/jvm/java-11-openjdk/",
+          },
+          {
+            name = "JavaSE-12",
+            path = "TODO",
+          },
+          {
+            name = "JavaSE-13",
+            path = "TODO",
+          },
+          {
+            name = "JavaSE-14",
+            path = "TODO",
+          },
+          {
+            name = "JavaSE-15",
+            path = "TODO",
           },
           {
             name = "JavaSE-16",
@@ -308,24 +351,45 @@ local function setup_jdtls()
             name = "JavaSE-17",
             path = home .. "/.local/jdks/jdk-17.0.2+8/",
           },
+          {
+            name = "JavaSE-18",
+            path = "TODO",
+          },
+          {
+            name = "JavaSE-19",
+            path = "TODO",
+          },
+          {
+            name = "JavaSE-20",
+            path = "TODO",
+          },
+          {
+            name = "JavaSE-21",
+            path = "TODO",
+          },
+          {
+            name = "JavaSE-22",
+            path = "TODO",
+          },
           --]]
         },
       },
     },
   }
 
-  -- Create a table called init_options to pass the bundles with debug and testing jar, along with the extended client capablies to the start or attach function of JDTLS
+  -- Create table init_options with debug and testing jar bundles, plus
+  -- extended client capablies to pass to JDTLS function start_or_attach().
   local init_options = {
     bundles = bundles,
     extendedClientCapabilities = extendedClientCapabilities
   }
 
-  -- Function that will be ran once the language server is attached
+  -- Function that will be ran once the language server is attached.
   local on_attach = function(_, bufnr)
-    -- Map the Java specific key mappings once the server is attached
+    -- Map the Java-specific key mappings once the server is attached.
     java_keymaps()
 
-    -- Setup the java debug adapter of the JDTLS server
+    -- Setup the Java debug adapter of the JDTLS server.
     require('jdtls.dap').setup_dap()
 
     -- Find the main method(s) of the application so the debug adapter can
@@ -338,12 +402,13 @@ local function setup_jdtls()
     require('jdtls.dap').setup_dap_main_class_configs()
     -- Enable jdtls commands to be used in Neovim
     --require 'jdtls.setup'.add_commands() -- deprecated (start() auto-adds commands)
-    -- Refresh the codelens
-    -- Code lens enables features such as code reference counts, implemenation counts, and more.
+
+    -- Refresh the codelens.  Code lens enables features such as code
+    -- reference counts, implemenation counts, and more.
     vim.lsp.codelens.refresh()
 
-    -- Setup a function that automatically runs every time a java file is
-    -- saved to refresh the code lens
+    -- Setup a function that automatically runs every time a Java file is
+    -- saved to refresh the code lens.
     vim.api.nvim_create_autocmd("BufWritePost", {
       pattern = { "*.java" },
       callback = function()
@@ -352,7 +417,7 @@ local function setup_jdtls()
     })
   end
 
-  -- Create the configuration table for the start or attach function
+  -- Create the configuration table for the start_or_attach() function.
   local config = {
     cmd = cmd,
     root_dir = root_dir,
@@ -362,23 +427,24 @@ local function setup_jdtls()
     on_attach = on_attach
   }
 
-  -- Start the JDTLS server
+  -- Start JDTLS or attach to an existing one based on root_dir.
   require('jdtls').start_or_attach(config)
 end
 
 return {
-    'mfussenegger/nvim-jdtls',
-    lazy = true,
-    ft = { 'java' },
-    dependencies = {
-      "jay-babu/mason-nvim-dap.nvim",
-      "mfussenegger/nvim-dap",
-    },
-    config = function()
-      -- ensure the java debug adapter is installed
-      require("mason-nvim-dap").setup({
-        ensure_installed = { "javadbg", "javatest" }
-      })
-      setup_jdtls()
-    end,
+  'mfussenegger/nvim-jdtls',
+  lazy = true,
+  ft = { 'java' },
+  dependencies = {
+    "jay-babu/mason-nvim-dap.nvim",
+    "mfussenegger/nvim-dap",
+  },
+  config = function()
+    -- Ensure the Java debug adapter is installed.
+    ---@diagnostic disable-next-line: missing-fields
+    require("mason-nvim-dap").setup({
+      ensure_installed = { "javadbg", "javatest" }
+    })
+    setup_jdtls()
+  end,
 }
