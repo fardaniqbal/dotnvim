@@ -175,6 +175,98 @@ local function setup_jdtls()
     workspace_dir
   }
 
+  -- Run an external process with the given argv array.
+  local runproc = function(argv)
+    local ok, sysobj = pcall(vim.system, argv, { text = true })
+    local res = ok and sysobj:wait()
+    local stdout = (ok and res and vim.fn.trim(res.stdout, '\n', 2)) or ''
+    local stderr = (ok and res and vim.fn.trim(res.stderr, '\n', 2)) or ''
+    local err = -1
+    if ok and res and res.signal == 0 then
+      err = res.code
+    end
+    return err, stdout, stderr
+  end
+
+  -- Run given java executable with '-version' and return the major version
+  -- number parsed from executable's output, or nil if parsing failed.
+  local java_version_from_cmd = function(executable)
+    local _, stdout, stderr = runproc({executable, '-version'})
+    stdout = stdout and vim.fn.trim(stdout) or ''
+    stderr = stderr and vim.fn.trim(stderr) or ''
+    stdout = stdout == '' and stderr or stdout
+    stdout = stdout:gsub('^javac', ''):gsub('^.exe', ''):gsub('^%s*', '')
+    local version = stdout:gsub('^1%.', ''):match('^%d+')
+    return version and tonumber(version) or nil
+  end
+
+  -- Return given java executable's version number deduced from the
+  -- executable's path name, or nil if indeterminate.
+  local java_version_from_path = function(executable)
+    local basedir = vim.fn.fnamemodify(executable, ":p:h:h")
+    basedir = vim.fn.fnamemodify(basedir, ":p:h:t"):gsub('[ _-]', '')
+    basedir = basedir:gsub('^open', '')
+    basedir = basedir:gsub('^jdk', ''):gsub('^java', ''):gsub('^1%.', '')
+    local version = basedir:match('^%d+')
+    version = version ~= nil and tonumber(version)
+    return version
+  end
+
+  -- Split a string by the given seperator.  Return list of strings.
+  local splitstr = function(inputstr, sep)
+    local t = {}
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+      table.insert(t, str)
+    end
+    return t
+  end
+
+  local jdk_path
+  if vim.fn.has('win32') ~= 0 then
+    jdk_path = function(major_version)
+      local progfiles = os.getenv('PROGRAMFILES')
+      if not progfiles or progfiles == '' then
+        progfiles = os.getenv('SystemDrive') .. '/Program Files'
+      end
+      local search_dirs = { progfiles .. '/Java' }
+
+      -- Search in standard install dirs.
+      for _, dir in ipairs(vim.fn.glob(progfiles .. '/Java/*', true, true)) do
+        if vim.fn.executable(dir .. "/bin/javac") ~= 0 then
+          local ver = java_version_from_path(dir .. "/bin/javac")
+          print('java version from path = "' .. tostring(ver) .. '" (' .. dir .. ')')
+          --if ver == major_version then return dir end
+        end
+      end
+
+      -- Not found in standard install dirs, so check everything in PATH.
+      local path = os.getenv('PATH') or ''
+      for _, dir in ipairs(splitstr(path, ';')) do
+        local ver = java_version_from_cmd(dir .. '/' .. 'javac')
+        if ver then
+          print('javac = "' .. ver .. '" (' .. dir .. ')')
+        end
+        if ver == major_version then return vim.fn.fnamemodify(dir, ":h") end
+      end
+
+      return nil
+    end
+  elseif vim.fn.has('mac') ~= 0 then
+    ---@diagnostic disable-next-line: unused-local
+    jdk_path = function(major_version)
+      -- TODO: finish implementing this.
+      return "/usr/lib/jvm/java-8-openjdk"
+    end
+  else
+    jdk_path = function(major_version)
+      local path
+      --path = "/usr/lib/jvm/java-8-openjdk/"
+      path = "/usr/lib/jvm/java-8-openjdk-amd64/"
+      -- TODO: finish implementing this.
+      return path
+    end
+  end
+
    -- Configure settings in the JDTLS server.
   local settings = {
     java = {
@@ -311,8 +403,7 @@ local function setup_jdtls()
           --]]
           {
             name = "JavaSE-1.8",
-            --path = "/usr/lib/jvm/java-8-openjdk/",
-            path = "/usr/lib/jvm/java-8-openjdk-amd64/",
+            path = jdk_path(8),
           },
           --[[
           {
