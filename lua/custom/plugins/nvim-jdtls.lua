@@ -188,9 +188,9 @@ local function setup_jdtls()
     return err, stdout, stderr
   end
 
-  -- Run given java executable with '-version' and return the major version
-  -- number parsed from executable's output, or nil if parsing failed.
-  local java_version_from_cmd = function(executable)
+  -- Return given javac executable's major version number parsed from its
+  -- output when run with argument '-version', or nil on parse failure.
+  local javac_version_from_cmd = function(executable)
     local _, stdout, stderr = runproc({executable, '-version'})
     stdout = stdout and vim.fn.trim(stdout) or ''
     stderr = stderr and vim.fn.trim(stderr) or ''
@@ -200,16 +200,28 @@ local function setup_jdtls()
     return version and tonumber(version) or nil
   end
 
-  -- Return given java executable's version number deduced from the
+  -- Return given javac executable's version number deduced from the
   -- executable's path name, or nil if indeterminate.
-  local java_version_from_path = function(executable)
+  local javac_version_from_path = function(executable)
+    --executable = 'C:\\Appsupport\\BIN_X64\\eclipse-jee-2024-12-R-win32-x86_64\\plugins\\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.5.v20241023-1957\\jre\\bin\\java'
+    --executable = 'C:\\Program Files\\Java\\jdk-1.8\\jre/bin\\java'
+    local version
     local basedir = vim.fn.fnamemodify(executable, ":p:h:h")
-    basedir = vim.fn.fnamemodify(basedir, ":p:h:t"):gsub('[ _-]', '')
-    basedir = basedir:gsub('^open', '')
-    basedir = basedir:gsub('^jdk', ''):gsub('^java', ''):gsub('^1%.', '')
-    local version = basedir:match('^%d+')
-    version = version ~= nil and tonumber(version)
-    return version
+    if basedir:match('[\\/]jre$') then
+      basedir = vim.fn.fnamemodify(basedir, ':h')
+    end
+    basedir = vim.fn.fnamemodify(basedir, ":p:h:t")
+    if basedir:match('^org%.eclipse%..-%.jre%.full%.') then
+      basedir = basedir:gsub('^org%.eclipse%..-%.jre%.full%.', '')
+      version = (basedir:match('_(%d+%.%d+%.%d+)') or
+                 basedir:match('_(%d+%.%d+)') or
+                 basedir:match('_(%d+)'))
+    else
+      basedir = basedir:gsub('[ _-]', ''):gsub('^open', '')
+      version = basedir:gsub('^jdk', ''):gsub('^java', '')
+    end
+    version = version and version:gsub('^1%.', ''):match('^%d+')
+    return version and tonumber(version) or nil
   end
 
   -- Split a string by the given seperator.  Return list of strings.
@@ -221,50 +233,102 @@ local function setup_jdtls()
     return t
   end
 
-  local jdk_path
-  if vim.fn.has('win32') ~= 0 then
-    jdk_path = function(major_version)
+  -- Search for JDKs in commonly-used install dirs and return a table that
+  -- maps their install dirs to their corresponding major Java versions.
+  local find_jdk_installations = function()
+    local candidates = {}
+
+    local normpath = function(path)
+      if vim.fn.filereadable(path) then path = vim.fn.resolve(path) end
+      return vim.fs.normalize(vim.fs.abspath(path), { expand_env = false })
+    end
+
+    -- Search JAVA_HOME.
+    if os.getenv('JAVA_HOME') and os.getenv('JAVA_HOME') ~= '' then
+      candidates[normpath(os.getenv('JAVA_HOME') .. '/bin/javac')] = true
+    end
+
+    -- Search PATH.
+    local path = os.getenv('PATH') or ''
+    for _, dir in ipairs(splitstr(path, ';')) do
+      local cand = normpath(dir .. '/javac')
+      if vim.fn.executable(cand) ~= 0 then
+        candidates[cand] = true
+      end
+    end
+
+    -- Search in standard install dirs.
+    local std_dirs = {}
+    if vim.fn.has('win32') ~= 0 then
       local progfiles = os.getenv('PROGRAMFILES')
       if not progfiles or progfiles == '' then
         progfiles = os.getenv('SystemDrive') .. '/Program Files'
       end
-      local search_dirs = { progfiles .. '/Java' }
-
-      -- Search in standard install dirs.
-      for _, dir in ipairs(vim.fn.glob(progfiles .. '/Java/*', true, true)) do
-        if vim.fn.executable(dir .. "/bin/javac") ~= 0 then
-          local ver = java_version_from_path(dir .. "/bin/javac")
-          print('java version from path = "' .. tostring(ver) .. '" (' .. dir .. ')')
-          --if ver == major_version then return dir end
+      table.insert(std_dirs, progfiles .. '/Java')
+    else
+      table.insert(std_dirs, '/usr/lib/jvm')
+      -- TODO: might also want to add some things under /opt, and also
+      -- wherever sdkman installs its packages.
+    end
+    for _, std_dir in ipairs(std_dirs) do
+      for _, dir in ipairs(vim.fn.glob(std_dir .. '/*', true, true)) do
+        for _, javac in ipairs {'/bin/javac', '/jre/bin/javac'} do
+          local cand = normpath(dir .. javac)
+          if vim.fn.executable(cand) ~= 0 then
+            candidates[cand] = true
+          end
         end
       end
+    end
 
-      -- Not found in standard install dirs, so check everything in PATH.
-      local path = os.getenv('PATH') or ''
-      for _, dir in ipairs(splitstr(path, ';')) do
-        local ver = java_version_from_cmd(dir .. '/' .. 'javac')
-        if ver then
-          print('javac = "' .. ver .. '" (' .. dir .. ')')
-        end
-        if ver == major_version then return vim.fn.fnamemodify(dir, ":h") end
-      end
+    -- Deduce major Java version for each candidate.  First try to guess it
+    -- from javac's path since it's faster, but if that fails, fall back to
+    -- the slow path of running `javac -version` and parsing its output.
+    for cand in pairs(candidates) do
+      candidates[cand] = javac_version_from_path(cand)
+    end
+    for cand,ver in pairs(candidates) do
+      candidates[cand] = ver or javac_version_from_cmd(cand)
+    end
 
-      return nil
+    -- Omit duplicate JDK versions and those whose versions we couldn't deduce.
+    local versions = {}
+    for cand,ver in pairs(candidates) do
+      if ver then versions[ver] = versions[ver] or cand end
     end
-  elseif vim.fn.has('mac') ~= 0 then
-    ---@diagnostic disable-next-line: unused-local
-    jdk_path = function(major_version)
-      -- TODO: finish implementing this.
-      return "/usr/lib/jvm/java-8-openjdk"
+    local java_homes = {}
+    for ver,cand in pairs(versions) do
+      assert(type(ver) == "number" and cand)
+      java_homes[vim.fn.fnamemodify(cand, ':p:h:h')] = ver
     end
-  else
-    jdk_path = function(major_version)
-      local path
-      --path = "/usr/lib/jvm/java-8-openjdk/"
-      path = "/usr/lib/jvm/java-8-openjdk-amd64/"
-      -- TODO: finish implementing this.
-      return path
+    return java_homes
+  end
+
+  -- Return table suitable for use as JDTLS's `runtimes` options based on
+  -- the given table that maps JAVA_HOME paths (strings) to major Java
+  -- versions (integers).
+  local jdtls_runtimes_from_java_homes = function(java_homes)
+    local runtimes = {}
+    for path,ver in pairs(java_homes) do
+      table.insert(runtimes, {
+        -- XXX: `name` fields are _not_ arbitrary.  Must match one of the
+        -- execution environments here:
+        -- https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
+        --
+        -- JDTLS will choose what runtime to use based on config found in
+        -- your project's pom.xml or build.gradle file.  E.g., for maven:
+        --   <properties>
+        --     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        --     <maven.compiler.source>11</maven.compiler.source>
+        --     <maven.compiler.target>11</maven.compiler.target>
+        --   </properties>
+        name = (ver <= 5 and "J2SE-1." .. ver) or
+               (ver <= 8 and "JavaSE-1." .. ver) or
+               ("JavaSE-" .. ver),
+        path = path,
+      })
     end
+    return runtimes
   end
 
    -- Configure settings in the JDTLS server.
@@ -367,103 +431,7 @@ local function setup_jdtls()
       -- project config, advise the developer before accepting the change.
       configuration = {
         updateBuildConfiguration = "interactive",
-
-        -- XXX: `path` items in the `runtimes` map are system-specific!
-        -- !!! They specify directories where each JDK is installed !!!
-        -- This will, of course, vary based on your local dev setup.
-        --
-        -- This necessarily involves dirty hacks where we set up each
-        -- `path` item on a case-by-case basis.  TODO: come up with
-        -- said dirty hacks for the systems I use.
-        runtimes = {
-          -- XXX: `name` fields are _not_ arbitrary.  Must match one of the
-          -- execution environments here:
-          -- https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
-          --
-          -- JDTLS will choose what runtime to use based on config found in
-          -- your project's pom.xml or build.gradle file.  E.g., for maven:
-          --   <properties>
-          --     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-          --     <maven.compiler.source>11</maven.compiler.source>
-          --     <maven.compiler.target>11</maven.compiler.target>
-          --   </properties>
-          --[[
-          {
-            name = "J2SE-1.5",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-1.6",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-1.7",
-            path = "TODO",
-          },
-          --]]
-          {
-            name = "JavaSE-1.8",
-            path = jdk_path(8),
-          },
-          --[[
-          {
-            name = "JavaSE-9",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-10",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-11",
-            path = "/usr/lib/jvm/java-11-openjdk/",
-          },
-          {
-            name = "JavaSE-12",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-13",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-14",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-15",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-16",
-            path = home .. "/.local/jdks/jdk-16.0.1+9/",
-          },
-          {
-            name = "JavaSE-17",
-            path = home .. "/.local/jdks/jdk-17.0.2+8/",
-          },
-          {
-            name = "JavaSE-18",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-19",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-20",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-21",
-            path = "TODO",
-          },
-          {
-            name = "JavaSE-22",
-            path = "TODO",
-          },
-          --]]
-        },
+        runtimes = jdtls_runtimes_from_java_homes(find_jdk_installations()),
       },
     },
   }
