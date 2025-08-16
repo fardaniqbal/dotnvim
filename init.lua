@@ -394,7 +394,11 @@ require('lazy').setup({
               winblend = 0,       -- otherwise underlying text shows through
               normal_hl = 'NormalFloat',
             },
-          }
+          },
+          -- Options for Fidget's LSP progress subsystem.
+          progress = {
+            suppress_on_insert = true,    -- suppress new messages while in insert mode
+          },
         }
       },
 
