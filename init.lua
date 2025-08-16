@@ -1,4 +1,9 @@
 -- Based on kickstart.nvim (https://github.com/nvim-lua/kickstart.nvim).
+--
+-- NOTE: to view a plugins configuration after it's loaded, run:
+--   :=vim.print(require('lazy.core.config').plugins['plugin-name'])
+-- For example, to view blink.cmp's configuration:
+--   :=vim.print(require('lazy.core.config').plugins['blink.cmp'])
 
 --[[
 -- Include vim config from ~/.vimrc or ~/.vim/vimrc if available.  Based on
@@ -798,11 +803,11 @@ require('lazy').setup({
       -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
       -- which automatically downloads a prebuilt binary when enabled.
       --
-      -- By default, we use the Lua implementation instead, but you may enable
-      -- the rust implementation via `'prefer_rust_with_warning'`
+      -- By default, Kickstart uses the Lua implementation instead, but you
+      -- may enable the rust implementation via `'prefer_rust_with_warning'`
       --
       -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'lua' },
+      fuzzy = { implementation = 'prefer_rust_with_warning' },
 
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true, window = { border = 'padded' } },
