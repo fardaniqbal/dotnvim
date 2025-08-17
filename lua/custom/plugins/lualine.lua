@@ -20,6 +20,14 @@ return {
     local refresh_debounce = 16 -- minimum milliseconds between refreshes
     vim.api.nvim_create_autocmd(
     {
+      -- XXX: this should more-or-less match lualine's default config
+      -- values for options.refresh.events.  It's a pain, but we'll have to
+      -- keep this up-to-date with lualine's default options in the README:
+      -- https://github.com/nvim-lualine/lualine.nvim/blob/master/README.md#global-options
+      --
+      -- This _does not_ mean that this list of events should match
+      -- _exactly_ with the above lualine docs.  But it _does_ mean we
+      -- should pay attention if it changes on future lualine updates.
       'WinEnter',
       'BufEnter',
       'BufWritePost',
