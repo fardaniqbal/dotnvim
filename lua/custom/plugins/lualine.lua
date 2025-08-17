@@ -4,6 +4,9 @@ return {
   'nvim-lualine/lualine.nvim',
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   config = function()
+    local lualine = require('lualine')
+    local uv = vim.uv or vim.loop
+
     -- Custom component 'my_filetype' - like Lualine's built-in 'filetype'
     -- component, but use Unicode icon instead of nerdfont icon.  Don't
     -- want to make coworkers install a nerdfont just for tmux sharing.
@@ -11,7 +14,39 @@ return {
       return '⠿ ' .. vim.bo.filetype
     end
 
-    require('lualine').setup {
+    -- Workaround to force lualine to refresh on certain events so it stays
+    -- responsive, even with low refresh rate settings.
+    local last_refresh = uv.now()
+    local refresh_debounce = 16 -- minimum milliseconds between refreshes
+    vim.api.nvim_create_autocmd(
+    {
+      'WinEnter',
+      'BufEnter',
+      'BufWritePost',
+      'SessionLoadPost',
+      'FileChangedShellPost',
+      'VimResized',
+      'Filetype',
+      "CursorMoved",
+      "CursorMovedI",
+      "ModeChanged",
+    },
+    {
+      group = vim.api.nvim_create_augroup("MyLualineForceRefreshGroup", { clear = true }),
+      callback = function()
+        local now = uv.now()
+        local diff = now - last_refresh
+        if diff >= refresh_debounce then
+          last_refresh = now
+        end
+        lualine.refresh({
+          force = diff >= refresh_debounce,
+          place = { 'statusline', },
+        })
+      end,
+    })
+
+    lualine.setup {
     options = {
       icons_enabled = true,
       theme = 'auto',
@@ -22,10 +57,10 @@ return {
       always_show_tabline = true,
       --globalstatus = true,  -- show one statusline for all windows if true
       refresh = {           -- refresh times are in milliseconds
-        statusline = 200,
-        tabline = 200,
-        winbar = 200,
-        refresh_time = 33   -- default is 16
+        statusline = 500,
+        tabline = 500,
+        winbar = 500,
+        refresh_time = 200  -- default is 16
       },
       disabled_filetypes = {
         statusline = {'neo-tree'},
