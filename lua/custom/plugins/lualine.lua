@@ -57,10 +57,10 @@ return {
       always_show_tabline = true,
       --globalstatus = true,  -- show one statusline for all windows if true
       refresh = {           -- refresh times are in milliseconds
-        statusline = 500,
-        tabline = 500,
-        winbar = 500,
-        refresh_time = 200  -- default is 16
+        statusline = 500,   -- default 100
+        tabline = 500,      -- default 100
+        winbar = 500,       -- default 100
+        refresh_time = 200  -- default 16
       },
       disabled_filetypes = {
         statusline = {'neo-tree'},
