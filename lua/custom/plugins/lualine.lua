@@ -16,7 +16,7 @@ return {
 
     -- Workaround to force lualine to refresh on certain events so it stays
     -- responsive, even with low refresh rate settings.
-    local last_refresh = uv.now()
+    local last_refresh_time = uv.now()
     local refresh_debounce = 16 -- minimum milliseconds between refreshes
     vim.api.nvim_create_autocmd(
     {
@@ -35,9 +35,9 @@ return {
       group = vim.api.nvim_create_augroup("MyLualineForceRefreshGroup", { clear = true }),
       callback = function()
         local now = uv.now()
-        local diff = now - last_refresh
+        local diff = now - last_refresh_time
         if diff >= refresh_debounce then
-          last_refresh = now
+          last_refresh_time = now
         end
         lualine.refresh({
           force = diff >= refresh_debounce,
