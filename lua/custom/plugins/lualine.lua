@@ -44,11 +44,13 @@ return {
       callback = function()
         local now = uv.now()
         local diff = now - last_refresh_time
-        if diff >= refresh_debounce then
-          last_refresh_time = now
-        end
+
+        -- XXX: uv.now() is _not_ guaranteed to be monotonic, so we must
+        -- account for it going backwards.
+        local force_refresh = diff >= refresh_debounce or diff < 0
+        if force_refresh then last_refresh_time = now end
         lualine.refresh({
-          force = diff >= refresh_debounce,
+          force = force_refresh,
           place = { 'statusline', },
         })
       end,
