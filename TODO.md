@@ -13,7 +13,7 @@
 - [ ] Set up a greeter/dashboard.
 - [x] Automatically go into insert mode when entering a terminal window.
 - [x] Disable line numbers and sign column in terminal windows.
-- [ ] Set up Java LSP.
+- [x] Set up Java LSP.
 - [ ] Auto-refresh neo-tree when files are added/deleted/changed. (Neo-tree
   has a built-in setting for this called `use_libuv_file_watcher`).
 - [x] FIXME: when opening a file from neo-tree with its preview mode
@@ -48,7 +48,7 @@
 - [ ] Add smooth-scrolling plugin
 - [x] Make indent-blankline's vertical bars more subtle.  Defaults are too
   distracting.
-- [ ] Replace nvim-cmp with blink, which should be snappier.  Nvim-cmp has
+- [x] Replace nvim-cmp with blink, which should be snappier.  Nvim-cmp has
   considerable input latency.
   - **[blink.cmp](https://github.com/Saghen/blink.cmp) is in beta (as of
     2024-12-05).**  Don't replace nvim-cmp until blink is stable.
@@ -61,7 +61,7 @@
 - [ ] Make Telescope always show a horizontal split unless nvim window is
   _really_ wide.
 - [ ] Make Telescope's file list show file names before directory names.
-- [ ] Make Telescope use fzf (see beginning of
+- [x] Make Telescope use fzf (see beginning of
   https://youtu.be/xdXE1tOT-qg?si=e7tK8mIL9i6L5Hup)
 - [x] Make ~~\<C-E\> and \<C-Y\>~~ \<C-D\> and \<C-U\> scroll Telescope's
   preview window scroll down/up one line at a time.
