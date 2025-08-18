@@ -1,3 +1,7 @@
+## Main TODO List
+
+- [ ] Eliminate idle CPU hogging by "which-key" plugin.  (See "Bottlenecks"
+  section below).
 - [ ] (Ongoing): continue to improve startup times with lazy loading.
 - [ ] lualine: disable status line on greeter screen.
 - [ ] Make `Telescope buffers` (`<leader><leader>`) open with the current
@@ -68,3 +72,15 @@
 - [x] For completion popup menus and inline code hints, change their
   background color and/or add a border to make it easier to visually
   distinguish them from actual buffer contents.
+
+## Bottlenecks
+
+Suspects of what's making nvim eat CPU while idle.
+
+* which-key plugin
+  - Commenting out the "which-key" section in `init.lua` brings nvim's CPU
+    usage while idle **completely down to zero**.
+  - This is _after_ putting in custom refresh/debounce logic in lualine.
+  - Confirmed this by checking `htop` before and after commenting out
+    "which-key" in `init.lua`.
+  - See TODO above - figure out how to use "which-key" without hogging CPU.
