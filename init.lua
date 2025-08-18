@@ -117,9 +117,9 @@ vim.cmd "autocmd BufEnter,WinEnter term://* startinsert"
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
--- Clear highlights on search when pressing <Esc> in normal mode
+-- Press <Esc> to clear message line and search highlights in normal mode.
 --  See `:help hlsearch`
---vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR><cmd>echo<CR>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
