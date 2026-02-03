@@ -64,6 +64,7 @@ vim.o.swapfile = false      -- disable swap files
 vim.o.signcolumn = 'yes:1'  -- show error gutter by default
 vim.o.wildignorecase = true -- ignore case when TAB-completing file names
 vim.o.wildmenu = true       -- show matches for command line TAB-completion
+vim.o.winborder = 'rounded' -- default border style for floating windows
 vim.o.updatetime = 250      -- decrease update time
 vim.o.timeoutlen = 300      -- wait this many milliseconds for key sequence
 
@@ -788,9 +789,9 @@ require('lazy').setup({
         documentation = {
           auto_show = true,
           auto_show_delay_ms = 500,
-          window = { border = 'padded' },
+          window = { border = 'rounded' },
         },
-        menu = { border = 'padded' },
+        menu = { border = 'rounded' },
         ghost_text = { enabled = true },
       },
 
