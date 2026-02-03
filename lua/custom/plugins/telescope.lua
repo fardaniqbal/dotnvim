@@ -49,10 +49,10 @@ return {
     -- NOTE: we can alternatively use autocmd UIEnter to set these as
     -- initial settings, but that slows down startup time.
     local get_layout_config = function(_)
-      local results_width_min = 40  -- adjust minimum width of results window
-      local preview_width_min = 75  -- adjust minimum width of preview window
+      local results_width_min = 80  -- adjust minimum width of results window
+      local preview_width_min = 120 -- adjust minimum width of preview window
       local hpad = calc_pad(vim.o.columns, 0.8, results_width_min+preview_width_min, 1)
-      local vpad = calc_pad(vim.o.lines, 0.9, 24, 0)
+      local vpad = calc_pad(vim.o.lines, 0.95, 24, 0)
 
       local preview_width =
         math.ceil(math.max(preview_width_min, (vim.o.columns - (2*hpad)) / 2))
