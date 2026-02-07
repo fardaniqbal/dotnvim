@@ -904,8 +904,8 @@ require('lazy').setup({
       signs = false, -- show icons in sign column if true
       gui_style = { fg = 'BOLD', bg = 'NONE' },
       highlight = {
-        pattern = [[.*<(KEYWORDS)\s*:?]],
-        keyword = 'wide_fg',
+        pattern = [[.*<(KEYWORDS)>\s*:?]],
+        keyword = 'fg',
         after = '',
       },
     },
