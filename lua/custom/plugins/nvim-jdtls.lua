@@ -249,8 +249,14 @@ local function setup_jdtls()
     end
 
     -- Search PATH.
+    -- XXX: nvim does weird PATH conversion on Windows when running under
+    -- UNIX-y layers (e.g., MinGW, Cygwin, etc).  So make sure we determine
+    -- PATH separator in a way that splits PATH correctly when running nvim
+    -- not only from cmd.exe/powershell/explorer, but also from MinGW/Git
+    -- Bash, Cygwin, etc.  Using ';' carte-blanche on Windows works well.
+    local path_sep = vim.fn.has('win32') ~= 0 and ';' or ':'
     local path = os.getenv('PATH') or ''
-    for _, dir in ipairs(splitstr(path, ';')) do
+    for _, dir in ipairs(splitstr(path, path_sep)) do
       local cand = normpath(dir .. '/javac')
       if vim.fn.executable(cand) ~= 0 then
         candidates[cand] = true
