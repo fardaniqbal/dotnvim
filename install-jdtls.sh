@@ -18,11 +18,13 @@ err() { printf "%s\n" "$self: $*" >&2; exit 1; }
 while [ $# -gt 0 ]; do
   arg="$2"
   shift_arg='shift'
-  if [ $(expr "$1" : '^[^=]\+=.*$') -gt 0 ]; then
+  if [ $(expr -- "$1" : '^[^=]\+=.*$') -gt 0 ]; then
     arg="${1#*=}"
     shift_arg=''
   fi
   case "$1" in
+    -) break
+      ;;
     --) shift; break
       ;;
     --clean)
@@ -46,7 +48,7 @@ while [ $# -gt 0 ]; do
       printf '    Print this message and exit.\n' >&2
       exit 2
       ;;
-    -*|--*)
+    -*)
       printf '%s: unknown option %s.\n' "$self" "$1" >&2
       printf 'Run with --help for usage info.\n' >&2
       exit 2
