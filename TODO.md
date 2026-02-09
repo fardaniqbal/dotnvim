@@ -1,6 +1,7 @@
 ## Main TODO List
 
 - [ ] Add a plugin that integrates with Tmux's session saver.
+  - Still in progress.  See `session.lua`.
 - [ ] Eliminate idle CPU hogging by "which-key" plugin.  (See "Bottlenecks"
   section below).
 - [ ] (Ongoing): continue to improve startup times with lazy loading.
