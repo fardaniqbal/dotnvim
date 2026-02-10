@@ -404,7 +404,10 @@ require('lazy').setup({
       },
 
       -- Allows extra capabilities provided by blink.cmp
-      'saghen/blink.cmp',
+      {
+        'saghen/blink.cmp',
+        event = 'InsertEnter',  -- XXX: does event = '...' do anything here?
+      },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -716,7 +719,7 @@ require('lazy').setup({
 
   { -- Autocompletion
     'saghen/blink.cmp',
-    event = 'VimEnter',
+    event = 'InsertEnter', -- NB: used to be 'VimEnter'; not sure if relevant
     version = '1.*',
     dependencies = {
       -- Snippet Engine
