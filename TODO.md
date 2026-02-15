@@ -1,5 +1,7 @@
 ## Main TODO List
 
+- [ ] Suppress "Press ENTER" prompts.  Causes trouble with LSP startup,
+  etc.
 - [ ] Add a plugin that integrates with Tmux's session saver.
   - Still in progress.  See `session.lua`.
 - [ ] Eliminate idle CPU hogging by "which-key" plugin.  (See "Bottlenecks"
