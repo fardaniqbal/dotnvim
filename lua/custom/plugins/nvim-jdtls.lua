@@ -470,14 +470,16 @@ local function setup_jdtls()
 
     -- Refresh the codelens.  Code lens enables features such as code
     -- reference counts, implemenation counts, and more.
-    vim.lsp.codelens.refresh()
+    -- NOTE: vim.lsp.codelens.refresh() is deprecated, and will be removed
+    -- in 0.13.  Use vim.lsp.codelens.enable(true) instead.
+    vim.lsp.codelens.enable(true)
 
     -- Setup a function that automatically runs every time a Java file is
     -- saved to refresh the code lens.
     vim.api.nvim_create_autocmd("BufWritePost", {
       pattern = { "*.java" },
       callback = function()
-        local _, _ = pcall(vim.lsp.codelens.refresh)
+        local _, _ = pcall(vim.lsp.codelens.enable, true)
       end
     })
   end

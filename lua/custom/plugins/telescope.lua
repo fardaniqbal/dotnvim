@@ -3,6 +3,7 @@ return {
   'nvim-telescope/telescope.nvim',
   event = 'VeryLazy',
   --branch = '0.1.x', -- removed in 9929044 in main kickstart repo
+  version = '*',
   dependencies = {
     'nvim-lua/plenary.nvim',
     { -- If encountering errors, see telescope-fzf-native README for installation instructions
