@@ -8,15 +8,15 @@
 .gitignore text=auto
 Makefile text=auto
 makefile text=auto
-*.md text=auto
 *.mk text=auto
-*.txt text=auto
 
 # Declare files that will always have CRLF or LF line endings on checkout.
 *.sln text eol=crlf
 *.bat text eol=crlf
 *.cmd text eol=crlf
 *.bash text eol=lf
+*.md text=lf
+*.txt text=lf
 *.sh text eol=lf
 *.csh text eol=lf
 
