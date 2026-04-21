@@ -20,6 +20,19 @@ vim.keymap.set("n", "<S-Down>", "<cmd>resize -1<cr>", { desc = "Decrease Window 
 vim.keymap.set("n", "<S-Left>", "<cmd>vertical resize -1<cr>", { desc = "Decrease Window Width" })
 vim.keymap.set("n", "<S-Right>", "<cmd>vertical resize +1<cr>", { desc = "Increase Window Width" })
 
+-- Move cursor by visual screen lines, unless prefix count is given.
+vim.keymap.set({"n", "v"}, "j", function()
+  return tonumber(vim.api.nvim_get_vvar("count")) > 0 and "j" or "gj"
+end, { expr = true, silent = true })
+vim.keymap.set({"n", "v"}, "k", function()
+  return tonumber(vim.api.nvim_get_vvar("count")) > 0 and "k" or "gk"
+end, { expr = true, silent = true })
+vim.keymap.set({"n", "v"}, "$", function()
+  return tonumber(vim.api.nvim_get_vvar("count")) > 0 and "$" or "g$"
+end, { expr = true, silent = true })
+vim.keymap.set({"n", "v"}, "0", "g0", { silent = true })
+vim.keymap.set({"n", "v"}, "^", "g^", { silent = true })
+
 -- Move selected lines up/down in visual mode.
 vim.keymap.set("v", "J", ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = "Move Lines Down" })
 vim.keymap.set("v", "K", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = "Move Lines Up" })
