@@ -15,7 +15,8 @@ return {
         -- have bigger fish to fry.
         highlight = {'diffLine'},
       },
-      indent = { char = '│' }, -- default guide is too thick/distracting
+      -- default guide is too thick/distracting
+      indent = { char = '│', tab_char = '│', },
     },
   },
 }
