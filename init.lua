@@ -338,7 +338,7 @@ require('lazy').setup({
   { -- Change cursorline color based on mode.
     'mvllow/modes.nvim',
     event = { 'VeryLazy', 'ModeChanged' },
-    tag = 'v0.2.1',
+    version = '0.3.*',  --tag = 'v0.2.1',
     config = function()
       require('modes').setup {
         -- Set opacity for cursorline and number background
