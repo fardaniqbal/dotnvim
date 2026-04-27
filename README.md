@@ -34,6 +34,30 @@ your `$PATH` before using this Neovim config:
     `npm install -g` commands install npm packages to your home directory.
   - Re-run `npm install -g neovim` any time you upgrade Neovim.
 * `make`, `gcc`, and the usual suspects to build optional plugins.
+* `tree-sitter` and `tree-sitter-cli` - for accurate syntax highlighting.
+  - On Windows: **TODO**
+  - On MacOS using `brew`:
+    ```bash
+    brew install tree-sitter
+    brew install tree-sitter-cli
+    ```
+  - On Linux: **TODO**
+* Install a "nerd font" _and_ configure your terminal to use it.
+  - On Windows using PowerShell:
+    ```powershell
+    # Run the following ONCE to install the module.
+    Install-PSResource -Name NerdFonts
+    Import-Module -Name NerdFonts
+
+    # Run the following for each font you want to install.
+    Install-NerdFont -Name 'MesloLG'
+    ```
+  - On MacOS using `brew`:
+    ```bash
+    brew install --cask font-meslo-lg-nerd-font
+    ```
+  - For Linux or other operating systems, see [instructions in nerd-font
+    repo](https://github.com/ryanoasis/nerd-fonts#font-installation).
 * For Java integration, you'll need the following executables installed:
   `java`, `javac`, `mvn`, `ant`, etc.  For example, on MacOS using `brew`:
   ```bash
