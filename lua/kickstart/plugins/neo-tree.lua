@@ -1,6 +1,14 @@
 -- Neo-tree is a Neovim plugin to browse the file system
 -- https://github.com/nvim-neo-tree/neo-tree.nvim
 
+-- True if Vim was started with any directories on the command line.
+local vim_started_with_dirs = (function()
+  for _, arg in pairs(vim.v.argf) do -- argf has ONLY file/path args; no --flags
+    if vim.fn.isdirectory(arg) ~= 0 then return true end
+  end
+  return false
+end)()
+
 return {
   'nvim-neo-tree/neo-tree.nvim',
   branch = 'v3.x',
@@ -10,7 +18,9 @@ return {
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
   },
-  lazy = false, -- lazy must be false for netrw hijack to work on startup
+  -- lazy must be false for netrw hijack to work on startup
+  lazy = not vim_started_with_dirs,
+  event = vim_started_with_dirs and nil or "VeryLazy",
   keys = {
     { '\\', ':Neotree<CR>', desc = 'NeoTree reveal', silent = true },
   },
