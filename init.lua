@@ -262,7 +262,7 @@ require('lazy').setup({
 
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
-    event = 'VimEnter', -- Sets the loading event to 'VimEnter'
+    event = 'VeryLazy', -- set the loading event to 'VeryLazy'
     dependencies = {{ 'echasnovski/mini.icons', version = '*' }},
     opts = {
       delay = 16, -- milliseconds between key press and opening which-key
@@ -375,6 +375,7 @@ require('lazy').setup({
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
+    event = 'VeryLazy',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim.
       -- Mason must be loaded before its dependents so we need to set it up here.
