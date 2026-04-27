@@ -62,6 +62,7 @@ end
 ---- Main Lualine Plugin Config ----
 return {
   'nvim-lualine/lualine.nvim',
+  event = 'UIEnter',
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   config = function()
     -- Custom component 'my_filetype' - like Lualine's built-in 'filetype'
