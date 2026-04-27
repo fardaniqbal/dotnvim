@@ -16,9 +16,11 @@ your `$PATH` before using this Neovim config:
     ```bash
     for py in python python3; do
       type -p "$py" >/dev/null || continue
-      "$py" -m pip install --user --upgrade pip
-      "$py" -m pip install --user --use-feature=truststore pynvim
-      "$py" -m pip install --user --upgrade pynvim
+      "$py" -m pip install --help 2>&1 | grep -q 'break-system-packages' &&
+      pyflags='--break-system-packages' || pyflags=''
+      "$py" -m pip install $pyflags --user --upgrade pip
+      "$py" -m pip install $pyflags --user --use-feature=truststore pynvim
+      "$py" -m pip install $pyflags --user --upgrade pynvim
     done
     ```
 * [`ripgrep`](https://github.com/BurntSushi/ripgrep) - you'll need this for
