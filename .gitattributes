@@ -6,19 +6,42 @@
 # to native line endings on checkout.
 .gitattributes text=auto
 .gitignore text=auto
-Makefile text=auto
-makefile text=auto
-*.mk text=auto
 
 # Declare files that will always have CRLF or LF line endings on checkout.
 *.sln text eol=crlf
 *.bat text eol=crlf
 *.cmd text eol=crlf
+*.ps1 text eol=crlf
 *.bash text eol=lf
-*.md text=lf
-*.txt text=lf
 *.sh text eol=lf
 *.csh text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+Makefile text eol=lf
+makefile text eol=lf
+*.mk text eol=lf
+*.xml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.yaml text eol=lf
+*.properties text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.cc text eol=lf
+*.cpp text eol=lf
+*.cxx text eol=lf
+*.hpp text eol=lf
+*.hxx text eol=lf
+*.java text eol=lf
+*.jsf text eol=lf
+*.jsp text eol=lf
+*.jspf text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.vim text eol=lf
+*.lua text eol=lf
+*.py text eol=lf
+*.pl text eol=lf
 
 # Denote all files that are truly binary and should not be modified.
 *.a binary
@@ -55,8 +78,11 @@ makefile text=auto
 *.gif binary
 *.png binary
 *.jpg binary
+*.jpeg binary
 *.pdf binary
 *.doc binary
 *.docx binary
+*.ppt binary
+*.pptx binary
 *.xls binary
 *.xlsx binary
