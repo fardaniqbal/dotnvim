@@ -209,7 +209,7 @@ require('lazy').setup({
 
   -- Difference from base Kickstart (as of 2025-06-25) - make guess-indent
   -- load.  See https://github.com/nvim-lua/kickstart.nvim/pull/1532/files
-  { 'NMAC427/guess-indent.nvim', opts = {} }, -- Detect tabstop and shiftwidth automatically
+  { 'NMAC427/guess-indent.nvim', event = 'VeryLazy' }, -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -337,6 +337,7 @@ require('lazy').setup({
 
   { -- Change cursorline color based on mode.
     'mvllow/modes.nvim',
+    event = { 'VeryLazy', 'ModeChanged' },
     tag = 'v0.2.1',
     config = function()
       require('modes').setup {
@@ -957,6 +958,7 @@ require('lazy').setup({
   --]]
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    event = 'VeryLazy',
     build = ':TSUpdate',
     main = 'nvim-treesitter.config', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
