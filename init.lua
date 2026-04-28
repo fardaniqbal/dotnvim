@@ -179,6 +179,7 @@ vim.lsp.buf.hover = function(config)
 end
 
 -- Hide soft-wrap indicators in LSP hover window.
+-- FIXME: blink's completion window still shows soft-wrap indicators.
 local my_util_open_floating_preview = vim.lsp.util.open_floating_preview
 ---@diagnostic disable-next-line: duplicate-set-field
 function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
@@ -1017,7 +1018,7 @@ require('lazy').setup({
   require 'custom.plugins.lastplace',
   require 'custom.plugins.lualine',
   require 'custom.plugins.mappings',
-  require 'custom.plugins.neoscroll',
+  -- require 'custom.plugins.neoscroll',
   -- require 'custom.plugins.session', -- TODO: session saver still needs work
   require 'custom.plugins.smear-cursor',
   require 'custom.plugins.nvim-jdtls',
