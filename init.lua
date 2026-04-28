@@ -178,6 +178,17 @@ vim.lsp.buf.hover = function(config)
   }, config or {}))
 end
 
+-- Hide soft-wrap indicators in LSP hover window.
+local my_util_open_floating_preview = vim.lsp.util.open_floating_preview
+---@diagnostic disable-next-line: duplicate-set-field
+function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+  local _, winid = my_util_open_floating_preview(contents, syntax, opts, ...)
+  local optopts = {win = winid, scope = "local"}
+  vim.api.nvim_set_option_value("breakindent", true, optopts)
+  vim.api.nvim_set_option_value("breakindentopt", "", optopts)
+  vim.api.nvim_set_option_value("sbr", "NONE", optopts)
+end
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
