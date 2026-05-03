@@ -36,8 +36,8 @@ your `$PATH` before using this Neovim config:
     PREFIX="$HOME/local"
     mkdir -p "$PREFIX" &&
     cd "$PREFIX" &&
-    curl -kL https://nodejs.org/dist/v24.15.0/node-v24.15.0-win-x64.zip -O &&
-    unzip node-v24.15.0-win-x64.zip &&
+    curl -kL "https://nodejs.org/dist/v24.15.0/node-v24.15.0-win-x64.zip -O &&
+    unzip node-v24.15.0-win-x64.zip" &&
     /bin/rm -f node-v24.15.0-win-x64.zip &&
     node_dir="$(cd "$(ls -1trd node-* | tail -n1)" && pwd)" &&
 
@@ -52,7 +52,21 @@ your `$PATH` before using this Neovim config:
   - Re-run `npm install -g neovim` any time you upgrade Neovim.
 * `make`, `gcc`, and the usual suspects to build optional plugins.
 * `tree-sitter` and `tree-sitter-cli` - for accurate syntax highlighting.
-  - On Windows: **TODO**
+  - On Windows: run the following **in Git Bash or MinGW/MSYS2** (replace
+    `PREFIX=...` with your preferred install location):
+    ```bash
+    PREFIX="$HOME/local/bin"
+    mkdir -p "$PREFIX" &&
+    cd "$PREFIX" &&
+    curl -kL "https://github.com/tree-sitter/tree-sitter/releases/download/v0.26.8/tree-sitter-cli-windows-x64.zip" -O &&
+    unzip tree-sitter-cli-windows-x64.zip &&
+    /bin/rm -f tree-sitter-cli-windows-x64.zip &&
+
+    # Add tree-sitter to PATH:
+    ([[ ":${PATH}:" == *":$(pwd):"* ]] ||
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
+        "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -w "$(pwd)");\$([Environment]::GetEnvironmentVariable('PATH','User'))\",'User');")
+    ```
   - On MacOS using `brew`:
     ```bash
     brew install tree-sitter
