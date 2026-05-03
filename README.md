@@ -40,10 +40,11 @@ your `$PATH` before using this Neovim config:
     unzip node-v24.15.0-win-x64.zip &&
     /bin/rm -f node-v24.15.0-win-x64.zip &&
     node_dir="$(cd "$(ls -1trd node-* | tail -n1)" && pwd)" &&
-    cat >> ~/.bashrc <<EOF
-    [[ ":\${PATH}:" == *":$node_dir:"* ]] || export PATH="$node_dir:\$PATH"
-    EOF
-    [[ ":${PATH}:" == *":$node_dir:"* ]] || export PATH="$node_dir:$PATH"
+
+    # Add node, npm, npx, etc to PATH:
+    ([[ ":${PATH}:" == *":$node_dir:"* ]] ||
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
+        "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -w "$node_dir");\$([Environment]::GetEnvironmentVariable('PATH','User'))\",'User');")
     ```
   - Run `npm install -g neovim`.  If you don't have root/admin access, run
     `echo "prefix=$HOME/local/npm-packages" >> ~/.npmrc` to make future
@@ -58,15 +59,23 @@ your `$PATH` before using this Neovim config:
     brew install tree-sitter-cli
     ```
   - On Linux: **TODO**
+* If using Windows, install PowerShell 7 (i.e., `pwsh.exe`) if you don't
+  already have it.  **This is _NOT_ the PowerShell included with Windows**.
+  Run the following commands in a Windows command prompt (based on [these
+  instructions](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows?view=powershell-7.6)):
+    ```cmd
+    echo Y | winget search --id Microsoft.PowerShell --exact
+    winget install --id Microsoft.PowerShell --source winget
+    ```
 * Install a "nerd font" _and_ configure your terminal to use it.
-  - On Windows using PowerShell:
-    ```powershell
+  - On Windows using PowerShell 7 (i.e., `pwsh.exe`):
+    ```pwsh
     # Run the following ONCE to install the module.
-    Install-PSResource -Name NerdFonts
+    Install-PSResource -Name NerdFonts -TrustRepository
     Import-Module -Name NerdFonts
 
     # Run the following for each font you want to install.
-    Install-NerdFont -Name 'MesloLG'
+    Install-NerdFont -Name 'Meslo*' -Confirm:$False
     ```
   - On MacOS using `brew`:
     ```bash
