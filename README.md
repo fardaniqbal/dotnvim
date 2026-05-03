@@ -29,6 +29,22 @@ your `$PATH` before using this Neovim config:
 * [`fd`](https://github.com/sharkdp/fd) - to improve `telescope`'s file
   finder performance.
 * `npm` - you'll need this for some of the language servers.
+  - On Windows, you can install by running the following **in Git Bash or
+    MinGW/MSYS2** (replace `PREFIX=...` with your preferred install
+    location):
+    ```bash
+    PREFIX="$HOME/local"
+    mkdir -p "$PREFIX" &&
+    cd "$PREFIX" &&
+    curl -kL https://nodejs.org/dist/v24.15.0/node-v24.15.0-win-x64.zip -O &&
+    unzip node-v24.15.0-win-x64.zip &&
+    /bin/rm -f node-v24.15.0-win-x64.zip &&
+    node_dir="$(cd "$(ls -1trd node-* | tail -n1)" && pwd)" &&
+    cat >> ~/.bashrc <<EOF
+    [[ ":\${PATH}:" == *":$node_dir:"* ]] || export PATH="$node_dir:\$PATH"
+    EOF
+    [[ ":${PATH}:" == *":$node_dir:"* ]] || export PATH="$node_dir:$PATH"
+    ```
   - Run `npm install -g neovim`.  If you don't have root/admin access, run
     `echo "prefix=$HOME/local/npm-packages" >> ~/.npmrc` to make future
     `npm install -g` commands install npm packages to your home directory.
