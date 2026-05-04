@@ -151,6 +151,16 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
+-- Disable annoying 'Press ENTER' prompts.
+if vim.fn.has 'nvim-0.12' == 1 then
+  vim.api.nvim_create_autocmd('VimEnter', {
+    desc = 'Disable "Press ENTER" prompts',
+    group = vim.api.nvim_create_augroup('custom-disable-press-enter', {clear = true}),
+    once = true,
+    callback = function () require('vim._core.ui2').enable() end,
+  })
+end
+
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
