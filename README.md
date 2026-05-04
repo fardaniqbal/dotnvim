@@ -41,10 +41,15 @@ your `$PATH` before using this Neovim config:
     /bin/rm -f node-v24.15.0-win-x64.zip &&
     node_dir="$(cd "$(ls -1trd node-* | tail -n1)" && pwd)" &&
 
-    # Add node, npm, npx, etc to PATH:
-    ([[ ":${PATH}:" == *":$node_dir:"* ]] ||
+    # Add node, npm, npx, etc to PATH _only_ if it's not already there:
+    win_path_munge() {
+      local winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
+        -Command "\$([Environment]::GetEnvironmentVariable('PATH','User'))")" &&
+      ([[ ";$winpath;" == *";$(cygpath -wl "$1");"* ]] ||
       powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
-        "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -w "$node_dir");\$([Environment]::GetEnvironmentVariable('PATH','User'))\",'User');")
+        "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -wl "$1");$winpath\",'User');")
+    }
+    win_path_munge "$node_dir" && echo 'SUCCESS' || echo 'FAIL'
     ```
   - Run `npm install -g neovim`.  If you don't have root/admin access, run
     `echo "prefix=$HOME/local/npm-packages" >> ~/.npmrc` to make future
@@ -62,10 +67,15 @@ your `$PATH` before using this Neovim config:
     unzip tree-sitter-cli-windows-x64.zip &&
     /bin/rm -f tree-sitter-cli-windows-x64.zip &&
 
-    # Add tree-sitter to PATH:
-    ([[ ":${PATH}:" == *":$(pwd):"* ]] ||
+    # Add tree-sitter to PATH _only_ if it's not already there:
+    win_path_munge() {
+      local winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
+        -Command "\$([Environment]::GetEnvironmentVariable('PATH','User'))")" &&
+      ([[ ";$winpath;" == *";$(cygpath -wl "$1");"* ]] ||
       powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
-        "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -w "$(pwd)");\$([Environment]::GetEnvironmentVariable('PATH','User'))\",'User');")
+        "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -wl "$1");$winpath\",'User');")
+    }
+    win_path_munge "$(pwd)" && echo 'SUCCESS' || echo 'FAIL'
     ```
   - On MacOS using `brew`:
     ```bash
