@@ -26,8 +26,38 @@ your `$PATH` before using this Neovim config:
 * [`ripgrep`](https://github.com/BurntSushi/ripgrep) - you'll need this for
   [`telescope`](https://github.com/nvim-telescope/telescope.nvim)'s
   `grep-string` (and possibly other telescope functions).
+  - On Windows, you can install using Winget by running the following in
+    `cmd.exe`:
+    ```cmd
+    winget install BurntSushi.ripgrep.MSVC
+    ```
+  - On Mac OS, you can use install using Homebrew:
+    ```bash
+    brew install ripgrep
+    ```
+    Or with MacPorts:
+    ```bash
+    sudo port install ripgrep
+    ```
+  - On Linux, install using your favorite package manager.  Details in
+    ripgrep's [README](https://github.com/burntsushi/ripgrep#installation).
 * [`fd`](https://github.com/sharkdp/fd) - to improve `telescope`'s file
   finder performance.
+  - On Windows, you can install using Winget by running the following in
+    `cmd.exe`:
+    ```cmd
+    winget install sharkdp.fd
+    ```
+  - On Mac OS, you can use install using Homebrew:
+    ```bash
+    brew install fd
+    ```
+    Or with MacPorts:
+    ```bash
+    sudo port install fd
+    ```
+  - On Linux, install using your favorite package manager.  Details in
+    fd's [README](https://github.com/sharkdp/fd#on-ubuntu).
 * `npm` - you'll need this for some of the language servers.
   - On Windows, you can install by running the following **in Git Bash or
     MinGW/MSYS2** (replace `PREFIX=...` with your preferred install
