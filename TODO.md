@@ -18,8 +18,9 @@
 - [x] Automatically go into insert mode when entering a terminal window.
 - [x] Disable line numbers and sign column in terminal windows.
 - [x] Set up JDTLS (Java LSP).
-- [ ] Make JDTLS search for JDK installations under /opt and wherever
-  sdkman installs its packages (in addition to where it already searches).
+- [ ] Make JDTLS search for JDK installations under /opt.
+- [x] Make JDTLS search for JDK installations wherever sdkman installs its
+  packages (in addition to where it already searches).
 - [ ] Auto-refresh neo-tree when files are added/deleted/changed. (Neo-tree
   has a built-in setting for this called `use_libuv_file_watcher`).
 - [x] FIXME: when opening a file from neo-tree with its preview mode

@@ -273,9 +273,9 @@ local function setup_jdtls()
       table.insert(std_dirs, progfiles .. '/Java')
     else
       table.insert(std_dirs, '/usr/lib/jvm')
-      -- TODO: might also want to add some things under /opt, and also
-      -- wherever sdkman installs its packages.
+      -- TODO: might also want to add some things under /opt.
     end
+    table.insert(std_dirs, (os.getenv('USERPROFILE') or os.getenv('HOME')) .. '/.sdkman/candidates/java')
     for _, std_dir in ipairs(std_dirs) do
       for _, dir in ipairs(vim.fn.glob(std_dir .. '/*', true, true)) do
         for _, javac in ipairs {'/bin/javac', '/jre/bin/javac'} do
