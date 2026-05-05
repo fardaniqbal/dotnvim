@@ -641,6 +641,7 @@ require('lazy').setup({
         pyright = {},
         rust_analyzer = {},
         ts_ls = {},
+        bashls = {},
 
         -- FIXME: do we need jdtls here?  Or are we correctly specifying a
         -- custom JDTLS install in lua/custom/plugins/nvim-jdtls.lua?
