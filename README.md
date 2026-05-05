@@ -86,6 +86,9 @@ your `$PATH` before using this Neovim config:
     `npm install -g` commands install npm packages to your home directory.
   - Re-run `npm install -g neovim` any time you upgrade Neovim.
 * `make`, `gcc`, and the usual suspects to build optional plugins.
+  - You can use `zig` as a drop-in replacement if you're on Windows and
+    don't want to set up MinGW/MSYS2.  See [Installing Zig on
+    Windows](#installing-zig-on-windows) below for details.
 * `tree-sitter` and `tree-sitter-cli` - for accurate syntax highlighting.
   - On Windows: run the following **in Git Bash or MinGW/MSYS2** (replace
     `PREFIX=...` with your preferred install location):
@@ -182,6 +185,87 @@ following differences_:
     rm -f "$LOCALAPPDATA/nvim"
     ln -s ~/dotfiles/dotnvim "$LOCALAPPDATA/nvim"
     ```
+
+### Installing Zig on Windows
+
+On Windows, if you don't want to set up MSYS2 just to get `gcc`, `make`,
+etc, then `zig` works fine as a drop-in replacement for NeoVim plugin
+purposes.  Run the following **in a Git Bash window** to install zig:
+
+```bash
+PREFIX="$HOME/local/zig"
+export MSYS="winsymlinks:nativestrict"
+export TMPDIR="${TMPDIR:-${TMP:-/tmp}}"
+mkdir -p "$PREFIX" && cd "$PREFIX" &&
+
+# Scrape latest zig version from its index.json file.
+zig_index="$(curl -kL "https://ziglang.org/download/index.json")" &&
+scraped="$(printf '%s' "$zig_index" | awk '
+  BEGIN { found_ver=0; found_url=0; found_plat=0 }
+  found_ver==0  && /^ *"[0-9]+(\.[0-9]+)+" *: *{ *$/ { found_ver=1; print "ver: "$1 }
+  found_ver==1  && /^ *"x86_64-windows" *: *{ *$/ { found_plat=1 }
+  found_plat==1 && /^ *"tarball" *: */ { found_url=1; print "url: "$2 }
+  found_url==1 { exit 0 }
+  END { exit (found_url==0) }')"
+if [ $? -ne 0 ]; then error "unable to scrape zig's index.json"; fi
+
+zig_bin=''
+zig_ver="$(printf '%s' "$scraped" | grep '^ver:' | sed -E 's,^[^"]*"([^"]+)".*$,\1,')"
+zig_url="$(printf '%s' "$scraped" | grep '^url:' | sed -E 's,^[^"]*"([^"]+)".*$,\1,')"
+if [[ "$zig_url" != http?://* ]]; then
+  echo "ERROR: could not scrape zig url: '%zig_url'"
+else
+  echo "Installing zig $zig_ver from '$zig_url'..."
+  curl -kL -o "$TMPDIR/zig-$zig_ver.zip" "$zig_url" &&
+  unzip -uC "$TMPDIR/zig-$zig_ver.zip" &&
+  /bin/rm -f "$TMPDIR/zig-$zig_ver.zip" &&
+  [ -x */zig.exe ] && zig_bin="$(echo */zig.exe)"
+fi
+if [ -z "$zig_bin" ]; then
+  echo 'ERROR: could not extract zig package'
+else
+  gen_zig_wrapper() {
+    [ $# -ge 2 ] && local file="$2" || local file="$1"
+    printf '%s\n' \
+      '#!/usr/bin/env bash' \
+      'realself="$(readlink -f "$0")" &&' \
+      'here="$(dirname "$realself")" &&' \
+      'exec "$here/zig" '"'$1'"' "$@"' >"$PREFIX/bin/$file" &&
+    chmod a+x "$PREFIX/bin/$file"
+  }
+  mkdir -p "$PREFIX/bin" &&
+  /bin/ln -sf "../$zig_bin" "$PREFIX/bin/zig" &&
+  gen_zig_wrapper 'ar' &&
+  gen_zig_wrapper 'cc' &&
+  gen_zig_wrapper 'cc' 'gcc' &&
+  gen_zig_wrapper 'c++' &&
+  gen_zig_wrapper 'c++' 'g++' &&
+  gen_zig_wrapper 'dlltool' &&
+  gen_zig_wrapper 'lib' &&
+  gen_zig_wrapper 'objcopy' &&
+  gen_zig_wrapper 'objdump' &&
+  gen_zig_wrapper 'ranlib' &&
+  gen_zig_wrapper 'rc' &&
+  gen_zig_wrapper 'ld.lld' &&
+  gen_zig_wrapper 'ld64.lld' &&
+  gen_zig_wrapper 'lld-link' &&
+  gen_zig_wrapper 'wasm-ld' &&
+  gen_zig_wrapper 'lld-link' 'ld'
+  if [ $? -ne 0 ]; then
+    echo 'FAIL'
+  else
+    # Add $PREFIX/bin to PATH _only_ if it's not already there:
+    win_path_munge() {
+      local winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
+        -Command "\$([Environment]::GetEnvironmentVariable('PATH','User'))")" &&
+      ([[ ";$winpath;" == *";$(cygpath -wl "$1");"* ]] ||
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
+        "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -wl "$1");$winpath\",'User');")
+    }
+    win_path_munge "$PREFIX/bin" && echo 'SUCCESS' || echo 'FAIL'
+  fi
+fi
+```
 
 ## Experimental
 
