@@ -44,16 +44,24 @@ local setup_refresh_timer = function()
     })
   end
 
+  -- Force the first refresh on plugin init to prevent UI lag on Vim startup.
+  lualine.refresh { force = true, place = {'statusline', 'winbar', 'tabline'} }
+
+  -- A longer debounce time on the first call slightly improves startup
+  -- time.  Subsequent calls use REFRESH_DEBOUNCE_TIME, so in practice
+  -- there's no perceivable difference in refresh lag.
+  local actual_debounce_time = 250
   local debounce_timer = uv.new_timer()
   vim.api.nvim_create_autocmd(LUALINE_REFRESH_EVENTS,
     {
       group = vim.api.nvim_create_augroup("MyLualineForceRefreshGroup", { clear = true }),
       callback = function(ev)
         assert(debounce_timer ~= nil)
-        debounce_timer:start(REFRESH_DEBOUNCE_TIME, 0, function()
+        debounce_timer:start(actual_debounce_time, 0, function()
           debounce_timer:stop()
           vim.schedule(function() refresh_callback(ev) end)
         end)
+        actual_debounce_time = REFRESH_DEBOUNCE_TIME
       end,
     }
   )
@@ -82,7 +90,8 @@ return {
       section_separators = { left = ' ', right = ''},
       always_show_tabline = true,
       --globalstatus = true,  -- show one statusline for all windows if true
-      refresh = {             -- refresh times are in milliseconds
+      refresh = {             -- refresh times are in milliseconds; we use our
+                              -- own refresh logic, so set these number high
         statusline = 10000,   -- default 100
         tabline = 10000,      -- default 100
         winbar = 10000,       -- default 100
