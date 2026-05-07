@@ -8,6 +8,11 @@ your `$PATH` before using this Neovim config:
 * Neovim, **at least** version 0.12
 * If you're on Windows, you'll need Git Bash (included in
   [Git](https://git-scm.com/)'s Windows installer) or MinGW/MSYS2.
+* On Windows, you must enable _non-admins_ to create symlinks.  See the
+  following for how to do this:
+  - [Enable developer mode](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development)
+  - [Allow non-admins to create symlinks](https://stackoverflow.com/a/76632011)
+  - [Tell git to use symlinks](https://stackoverflow.com/a/59761201)
 * Git
 * Curl
 * Unzip (command-line tool)
@@ -152,41 +157,33 @@ your `$PATH` before using this Neovim config:
 ## Installation
 
 _Recursively_ clone this repo _and its submodules_ into something like
-`~/dotfiles/dotnvim`, then add a symlink `~/.config/nvim` to your local
-clone of this repo.  For example:
+`~/dotfiles/dotnvim`, then symlink `$XDG_CONFIG_HOME/nvim` to your local
+clone of this repo.  (If `$XDG_CONFIG_HOME` is not set, then substitute
+with `$LOCALAPPDATA` on Windows, or `~/.config` otherwise.) For example, in
+Bash:
 
 ```bash
+if echo ${OSTYPE:-$(uname)} | grep -Eqi '^(win|mingw|cyg)'; then
+  # Handle Windows specially.
+  export MSYS='winsymlinks:nativestrict'
+  git config --global core.symlinks true
+  conf_dir="$(cygpath "${XDG_CONFIG_HOME:-$LOCALAPPDATA}")"
+else
+  conf_dir="${XDG_CONFIG_HOME:-$HOME/.config}"
+fi
+
 mkdir -p ~/dotfiles
 cd ~/dotfiles
 git clone --recurse-submodules https://github.com/fardaniqbal/dotnvim
 # Or git clone --recurse-submodules git@github.com:fardaniqbal/dotnvim.git
 # to clone through ssh.
-#
-# !!! Stop here if you're on Windows !!!
 
-mkdir -p ~/.config
-rm -f ~/.config/nvim
-ln -s ../dotfiles/dotnvim ~/.config/nvim
+mkdir -p "$conf_dir"
+rm -f "$conf_dir/nvim"
+ln -s ~/dotfiles/dotnvim "$conf_dir/nvim"
 ```
 
-### Windows Installation
-On Windows you can do the above using Git Bash or MSYS 2, _but with the
-following differences_:
-1.  You must enable _non-admins_ to create symlinks.  See the following for
-    how to do this:
-    - [Enable developer mode](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development)
-    - [Allow non-admins to create symlinks](https://stackoverflow.com/a/76632011)
-    - [Tell git to use symlinks](https://stackoverflow.com/a/59761201)
-2.  The symlinks must be placed under `$LOCALAPPDATA` rather than
-    `~/.config`:
-    ```bash
-    # Do this after following the above installation steps, _but stop after
-    # the`git clone ...` step_:
-    rm -f "$LOCALAPPDATA/nvim"
-    ln -s ~/dotfiles/dotnvim "$LOCALAPPDATA/nvim"
-    ```
-
-### Installing Zig on Windows
+## Installing Zig on Windows
 
 On Windows, if you don't want to set up MSYS2 just to get `gcc`, `make`,
 etc, then `zig` works fine as a drop-in replacement for NeoVim plugin
