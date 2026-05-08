@@ -1,160 +1,32 @@
-This repo stores my personal Neovim config and related files.
+This repo stores my personal Neovim config and related files.  These notes
+outline a [**summary of prerequisites**](#prerequisite-summary) for using
+this config, how to [**install the config**](#how-to-install-this-config)
+itself, and tips on [**setting up any
+prerequisites**](#prerequisite-details) you may not already have installed.
 
-## Prerequisites
+## Prerequisite Summary
 
-Make sure you have the following components installed on your system and in
-your `$PATH` before using this Neovim config:
+Make sure you have the following components installed on your system and
+available in your `$PATH` before using this Neovim config:
 
 * Neovim, **at least** version 0.12
-* If you're on Windows, you'll need Git Bash (included in
-  [Git](https://git-scm.com/)'s Windows installer) or MinGW/MSYS2.
-* On Windows, you must enable _non-admins_ to create symlinks.  See the
-  following for how to do this:
-  - [Enable developer mode](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development)
-  - [Allow non-admins to create symlinks](https://stackoverflow.com/a/76632011)
-  - [Tell git to use symlinks](https://stackoverflow.com/a/59761201)
+* If you're on Windows, you'll need Git Bash or MinGW/MSYS2.
+* On Windows, you must enable _non-admins_ to create symlinks.
 * Git
 * Curl
 * Unzip (command-line tool)
-* Python, **at least** version 3.9
-  - You'll need `pip` and `pynvim`:
-    ```bash
-    for py in python python3; do
-      type -p "$py" >/dev/null || continue
-      "$py" -m pip install --help 2>&1 | grep -q 'break-system-packages' &&
-      pyflags='--break-system-packages' || pyflags=''
-      "$py" -m pip install $pyflags --user --upgrade pip
-      "$py" -m pip install $pyflags --user --use-feature=truststore pynvim
-      "$py" -m pip install $pyflags --user --upgrade pynvim
-    done
-    ```
-* [`ripgrep`](https://github.com/BurntSushi/ripgrep) - you'll need this for
-  [`telescope`](https://github.com/nvim-telescope/telescope.nvim)'s
-  `grep-string` (and possibly other telescope functions).
-  - On Windows, you can install using Winget by running the following in
-    `cmd.exe`:
-    ```cmd
-    winget install BurntSushi.ripgrep.MSVC
-    ```
-  - On Mac OS, you can use install using Homebrew:
-    ```bash
-    brew install ripgrep
-    ```
-    Or with MacPorts:
-    ```bash
-    sudo port install ripgrep
-    ```
-  - On Linux, install using your favorite package manager.  Details in
-    ripgrep's [README](https://github.com/burntsushi/ripgrep#installation).
-* [`fd`](https://github.com/sharkdp/fd) - to improve `telescope`'s file
-  finder performance.
-  - On Windows, you can install using Winget by running the following in
-    `cmd.exe`:
-    ```cmd
-    winget install sharkdp.fd
-    ```
-  - On Mac OS, you can use install using Homebrew:
-    ```bash
-    brew install fd
-    ```
-    Or with MacPorts:
-    ```bash
-    sudo port install fd
-    ```
-  - On Linux, install using your favorite package manager.  Details in
-    fd's [README](https://github.com/sharkdp/fd#on-ubuntu).
-* `npm` - you'll need this for some of the language servers.
-  - On Windows, you can install by running the following **in Git Bash or
-    MinGW/MSYS2** (replace `PREFIX=...` with your preferred install
-    location):
-    ```bash
-    PREFIX="$HOME/local"
-    mkdir -p "$PREFIX" &&
-    cd "$PREFIX" &&
-    curl -kL "https://nodejs.org/dist/v24.15.0/node-v24.15.0-win-x64.zip -O &&
-    unzip node-v24.15.0-win-x64.zip" &&
-    /bin/rm -f node-v24.15.0-win-x64.zip &&
-    node_dir="$(cd "$(ls -1trd node-* | tail -n1)" && pwd)" &&
-
-    # Add node, npm, npx, etc to PATH _only_ if it's not already there:
-    win_path_munge() {
-      local winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
-        -Command "\$([Environment]::GetEnvironmentVariable('PATH','User'))")" &&
-      ([[ ";$winpath;" == *";$(cygpath -wl "$1");"* ]] ||
-      powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
-        "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -wl "$1");$winpath\",'User');")
-    }
-    win_path_munge "$node_dir" && echo 'SUCCESS' || echo 'FAIL'
-    ```
-  - Run `npm install -g neovim`.  If you don't have root/admin access, run
-    `echo "prefix=$HOME/local/npm-packages" >> ~/.npmrc` to make future
-    `npm install -g` commands install npm packages to your home directory.
-  - Re-run `npm install -g neovim` any time you upgrade Neovim.
+* Python, **at least** version 3.9, with `pip` and the `pynvim` package
+* [`ripgrep`](https://github.com/BurntSushi/ripgrep)
+* [`fd`](https://github.com/sharkdp/fd)
+* Nodejs/npm, with the `neovim` package
 * `make`, `gcc`, and the usual suspects to build optional plugins.
-  - You can use `zig` as a drop-in replacement if you're on Windows and
-    don't want to set up MinGW/MSYS2.  See [Installing Zig on
-    Windows](#installing-zig-on-windows) below for details.
-* `tree-sitter` and `tree-sitter-cli` - for accurate syntax highlighting.
-  - On Windows: run the following **in Git Bash or MinGW/MSYS2** (replace
-    `PREFIX=...` with your preferred install location):
-    ```bash
-    PREFIX="$HOME/local/bin"
-    mkdir -p "$PREFIX" &&
-    cd "$PREFIX" &&
-    curl -kL "https://github.com/tree-sitter/tree-sitter/releases/download/v0.26.8/tree-sitter-cli-windows-x64.zip" -O &&
-    unzip tree-sitter-cli-windows-x64.zip &&
-    /bin/rm -f tree-sitter-cli-windows-x64.zip &&
+* `tree-sitter`
+* If using Windows, you need PowerShell 7/`pwsh.exe` - **this is _NOT_ the
+  PowerShell included with Windows**
+* A "nerd font", with your terminal configured to use it
+* Java build tools if you want Java integration (JDK, Maven, etc)
 
-    # Add tree-sitter to PATH _only_ if it's not already there:
-    win_path_munge() {
-      local winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
-        -Command "\$([Environment]::GetEnvironmentVariable('PATH','User'))")" &&
-      ([[ ";$winpath;" == *";$(cygpath -wl "$1");"* ]] ||
-      powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
-        "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -wl "$1");$winpath\",'User');")
-    }
-    win_path_munge "$(pwd)" && echo 'SUCCESS' || echo 'FAIL'
-    ```
-  - On MacOS using `brew`:
-    ```bash
-    brew install tree-sitter
-    brew install tree-sitter-cli
-    ```
-  - On Linux: **TODO**
-* If using Windows, install PowerShell 7 (i.e., `pwsh.exe`) if you don't
-  already have it.  **This is _NOT_ the PowerShell included with Windows**.
-  Run the following commands in a Windows command prompt (based on [these
-  instructions](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows?view=powershell-7.6)):
-    ```cmd
-    echo Y | winget search --id Microsoft.PowerShell --exact
-    winget install --id Microsoft.PowerShell --source winget
-    ```
-* Install a "nerd font" _and_ configure your terminal to use it.
-  - On Windows using PowerShell 7 (i.e., `pwsh.exe`):
-    ```pwsh
-    # Run the following ONCE to install the module.
-    Install-PSResource -Name NerdFonts -TrustRepository
-    Import-Module -Name NerdFonts
-
-    # Run the following for each font you want to install.
-    Install-NerdFont -Name 'Meslo*' -Confirm:$False
-    ```
-  - On MacOS using `brew`:
-    ```bash
-    brew install --cask font-meslo-lg-nerd-font
-    ```
-  - For Linux or other operating systems, see [instructions in nerd-font
-    repo](https://github.com/ryanoasis/nerd-fonts#font-installation).
-* For Java integration, you'll need the following executables installed:
-  `java`, `javac`, `mvn`, `ant`, etc.  For example, on MacOS using `brew`:
-  ```bash
-  brew install oracle-jdk
-  brew install mvn
-  brew install ant
-  ```
-  Note that Java integration requires **at least JDK >= 21**.
-
-## Installation
+## How to Install This Config
 
 _Recursively_ clone this repo _and its submodules_ into something like
 `~/dotfiles/dotnvim`, then symlink `$XDG_CONFIG_HOME/nvim` to your local
@@ -183,10 +55,231 @@ rm -f "$conf_dir/nvim"
 ln -s ~/dotfiles/dotnvim "$conf_dir/nvim"
 ```
 
-## Installing Zig on Windows
+## Prerequisite Details
 
+This section contains details on setting up the prerequisites listed above.
+The main purpose is to document the steps I took in the past to set things
+up, so as to prevent spending hours re-googling steps I've already figured
+out the hard way.
+
+### Setting up Git Bash on Windows
+If you're on Windows, you'll need Git Bash.  This is included in
+[Git](https://git-scm.com/)'s Windows installer.  **TODO:** come up with an
+automated script to install this with the correct install options selected.
+
+### Enabling _non-admins_ to create symlinks on Windows
+See the following for how to do this:
+- [Enable developer mode](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development)
+- [Allow non-admins to create symlinks](https://stackoverflow.com/a/76632011)
+- [Tell git to use symlinks](https://stackoverflow.com/a/59761201)
+- **TODO:** come up with a script to do this automatically.
+
+### Installing Python >= 3.9
+**TODO**
+
+### Installing `pip` and the `pynvim` package
+1.  **TODO:** how to ensure `pip` is installed.
+2.  The following Bash snippet installs `pynvim`.
+    ```bash
+    for py in python python3; do
+      type -p "$py" >/dev/null || continue
+      "$py" -m pip install --help 2>&1 | grep -q 'break-system-packages' &&
+      pyflags='--break-system-packages' || pyflags=''
+      "$py" -m pip install $pyflags --user --upgrade pip
+      "$py" -m pip install $pyflags --user --use-feature=truststore pynvim
+      "$py" -m pip install $pyflags --user --upgrade pynvim
+    done
+    ```
+
+### Installing ripgrep
+You'll need [`ripgrep`](https://github.com/BurntSushi/ripgrep) for
+[`telescope`](https://github.com/nvim-telescope/telescope.nvim)'s
+`grep-string` (and possibly other telescope functions).
+- **Windows:** you can install using Winget by running the following in
+  `cmd.exe`:
+  ```cmd
+  winget install BurntSushi.ripgrep.MSVC
+  ```
+- **Mac OS:**, you can use install using Homebrew:
+  ```bash
+  brew install ripgrep
+  ```
+  Or with MacPorts:
+  ```bash
+  sudo port install ripgrep
+  ```
+- **Linux:** install using your favorite package manager.  Details in
+  ripgrep's [README](https://github.com/burntsushi/ripgrep#installation).
+  * **TODO:** instructions to automate installation on common distros -
+    Ubuntu/DEB-based, RedHat/RPM-based, and Arch/pacman-based.
+
+### Installing fd (file finder)
+[`fd`](https://github.com/sharkdp/fd) significantly improves `telescope`'s
+usability.
+- **Windows:**, you can install using Winget by running the following in
+  `cmd.exe`:
+  ```cmd
+  winget install sharkdp.fd
+  ```
+- **Mac OS:** you can use install using Homebrew:
+  ```bash
+  brew install fd
+  ```
+  Or with MacPorts:
+  ```bash
+  sudo port install fd
+  ```
+- **Linux:** install using your favorite package manager.  Details in fd's
+  [README](https://github.com/sharkdp/fd#on-ubuntu).
+  * **TODO:** instructions to automate installation on common distros -
+    Ubuntu/DEB-based, RedHat/RPM-based, and Arch/pacman-based.
+
+### Installing Nodejs/npm
+You'll need Nodejs and npm for some of the language servers.
+- **Windows:** install by running the following **in Git Bash or
+  MinGW/MSYS2** (replace `PREFIX=...` with your preferred install
+  location):
+  ```bash
+  PREFIX="$HOME/local"
+  mkdir -p "$PREFIX" &&
+  cd "$PREFIX" &&
+  curl -kL "https://nodejs.org/dist/v24.15.0/node-v24.15.0-win-x64.zip -O &&
+  unzip node-v24.15.0-win-x64.zip" &&
+  /bin/rm -f node-v24.15.0-win-x64.zip &&
+  node_dir="$(cd "$(ls -1trd node-* | tail -n1)" && pwd)" &&
+
+  # Add node, npm, npx, etc to PATH _only_ if it's not already there:
+  win_path_munge() {
+    local winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
+      -Command "\$([Environment]::GetEnvironmentVariable('PATH','User'))")" &&
+    ([[ ";$winpath;" == *";$(cygpath -wl "$1");"* ]] ||
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
+      "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -wl "$1");$winpath\",'User');")
+  }
+  win_path_munge "$node_dir" && echo 'SUCCESS' || echo 'FAIL'
+  ```
+- **Mac OS:** you can use install using Homebrew:
+  ```bash
+  # TODO: homebrew command to install Nodejs/npm
+  ```
+  Or with MacPorts:
+  ```bash
+  # TODO: port command to install Nodejs/npm
+  ```
+- **Linux:** **TODO:** instructions to automate installation on common
+  distros - Ubuntu/DEB-based, RedHat/RPM-based, and Arch/pacman-based.
+
+After installing Nodejs/npm, run `npm install -g neovim`.  If you don't
+have root/admin access, run `echo "prefix=$HOME/local/npm-packages" >>
+~/.npmrc` first.  This makes future `npm install -g` commands install npm
+packages to your home directory.
+
+Re-run `npm install -g neovim` any time you upgrade Neovim.
+
+### Installing tree-sitter
+You'll need `tree-sitter` for accurate syntax highlighting.
+- **Windows:** run the following **in Git Bash or MinGW/MSYS2** (replace
+  `PREFIX=...` with your preferred install location):
+  ```bash
+  PREFIX="$HOME/local/bin"
+  mkdir -p "$PREFIX" &&
+  cd "$PREFIX" &&
+  curl -kL "https://github.com/tree-sitter/tree-sitter/releases/download/v0.26.8/tree-sitter-cli-windows-x64.zip" -O &&
+  unzip tree-sitter-cli-windows-x64.zip &&
+  /bin/rm -f tree-sitter-cli-windows-x64.zip &&
+
+  # Add tree-sitter to PATH _only_ if it's not already there:
+  win_path_munge() {
+    local winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
+      -Command "\$([Environment]::GetEnvironmentVariable('PATH','User'))")" &&
+    ([[ ";$winpath;" == *";$(cygpath -wl "$1");"* ]] ||
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
+      "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -wl "$1");$winpath\",'User');")
+  } &&
+  win_path_munge "$(pwd)" && echo 'SUCCESS' || echo 'FAIL'
+  ```
+- **MacOS:** using Homebrew:
+  ```bash
+  brew install tree-sitter
+  brew install tree-sitter-cli
+  ```
+  Or with MacPorts:
+  ```bash
+  # TODO: port command to install tree-sitter
+  ```
+- **Linux:** **TODO:** instructions to automate installation on common
+  distros - Ubuntu/DEB-based, RedHat/RPM-based, and Arch/pacman-based.
+
+### Installing PowerShell 7/`pwsh.exe` (required only on Windows)
+Run the following commands in a Windows command prompt (based on [these
+instructions](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows?view=powershell-7.6)):
+```cmd
+echo Y | winget search --id Microsoft.PowerShell --exact
+winget install --id Microsoft.PowerShell --source winget
+```
+
+### Installing nerd fonts
+- **Windows:** using PowerShell 7 (i.e., `pwsh.exe`):
+  ```pwsh
+  # Run the following ONCE to install the module.
+  Install-PSResource -Name NerdFonts -TrustRepository
+  Import-Module -Name NerdFonts
+
+  # Run the following for each font you want to install.
+  Install-NerdFont -Name 'Meslo*' -Confirm:$False
+  ```
+- **MacOS:** using Homebrew:
+  ```bash
+  brew install --cask font-meslo-lg-nerd-font
+  ```
+  Or with MacPorts:
+  ```bash
+  # TODO: port command to install nerd font
+  ```
+- **Linux:** see [instructions in nerd-font
+  repo](https://github.com/ryanoasis/nerd-fonts#font-installation).
+  **TODO:** instructions to automate installation on common distros -
+  Ubuntu/DEB-based, RedHat/RPM-based, and Arch/pacman-based.
+
+Don't forget to configure your terminal to actually use the nerd font.
+
+### Installing Java build tools
+For Java integration, you'll need the following executables installed:
+`java`, `javac`, `mvn`, `ant`, etc.  For the JDKs, this Neovim config
+assumes you use `sdkman` to install them.  Run this in Bash to install
+`sdkman`:
+```bash
+curl -s "https://get.sdkman.io" | bash
+```
+Then use `sdkman` to install an LTS JDK, **at least version 25**:
+```bash
+sdk install java 25.0.3-tem
+sdk default java 25.0.3-tem
+```
+
+To install additional JDK versions, do `sdk install java IDENTIFIER`
+(replace `IDENTIFIER` with an appropriate value from the output of `sdk
+list java`.)
+
+### Installing Maven:
+- **Windows:** run the following **in Git Bash or MinGW/MSYS2**:
+  ```bash
+  # TODO: automated install instructions for Maven.
+  ```
+- **Mac OS**: using Homebrew:
+  ```bash
+  brew install mvn
+  ```
+  Or with MacPorts:
+  ```bash
+  # TODO: port command to install Maven.
+  ```
+- **Linux:** **TODO:** instructions to automate installation on common
+  distros - Ubuntu/DEB-based, RedHat/RPM-based, and Arch/pacman-based.
+
+### Installing Zig on Windows
 On Windows, if you don't want to set up MSYS2 just to get `gcc`, `make`,
-etc, then `zig` works fine as a drop-in replacement for NeoVim plugin
+etc, then `zig` works fine as a drop-in replacement for Neovim plugin
 purposes.  Run the following **in a Git Bash window** to install zig:
 
 ```bash
