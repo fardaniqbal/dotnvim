@@ -62,6 +62,7 @@ return {
         width = { padding = hpad },
         height = { padding = vpad },
         scroll_speed = 2,
+        prompt_position = 'top',
         flex = {
           -- Have to add a hard-coded constant to prevent a deadzone
           -- where preview window doesn't show.  Related to issue:
@@ -84,6 +85,7 @@ return {
           vertical = {
             preview_height = 0.5,
             preview_cutoff = 8,
+            mirror = true,
           },
         },
       }
@@ -135,6 +137,8 @@ return {
       --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
       --   },
         path_display = { "truncate", },
+        selection_strategy = 'follow',
+        sorting_strategy = 'ascending',
         layout_strategy = 'flex',
         layout_config = get_layout_config(nil),
 
@@ -202,5 +206,46 @@ return {
     vim.keymap.set('n', '<leader>sn', function()
       builtin.find_files { cwd = vim.fn.stdpath 'config' }
     end, { desc = '[S]earch [N]eovim files' })
+
+    -- Make telescope borderless
+    --[[ -- TODO: needs work
+    do
+      local TelescopePrompt = {
+        TelescopeNormal = {
+          bg = '#1f2335',
+        },
+        TelescopeBorder = {
+          fg = '#1f2335',
+          bg = '#1f2335',
+        },
+        TelescopeTitle = {
+          fg = '#545c7e',
+        },
+        TelescopePromptNormal = {
+          bg = '#2d3149',
+        },
+        TelescopePromptBorder = {
+          fg = '#2d3149',
+          bg = '#2d3149',
+        },
+        TelescopePromptTitle = {
+          fg = '#545c7e',
+          bg = '#2d3149',
+        },
+        TelescopePreviewTitle = {
+          --fg = '#1f2335',
+          fg = '#545c7e',
+          bg = '#1f2335',
+        },
+        TelescopeResultsTitle = {
+          --fg = '#1f2335',
+          fg = '#545c7e',
+          bg = '#1f2335',
+        },
+      }
+      for hl, col in pairs(TelescopePrompt) do
+          vim.api.nvim_set_hl(0, hl, col)
+      end
+    end --]]
   end,
 }
