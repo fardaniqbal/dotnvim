@@ -253,7 +253,7 @@ For Java integration, you'll need the following executables installed:
 assumes you use `sdkman` to install them.  Run this in Bash to install
 `sdkman`:
 ```bash
-curl -s "https://get.sdkman.io" | bash
+curl -skL "https://get.sdkman.io" | bash
 ```
 Then use `sdkman` to install an LTS JDK, **at least version 25**:
 ```bash
