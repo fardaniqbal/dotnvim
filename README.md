@@ -55,6 +55,10 @@ rm -f "$conf_dir/nvim"
 ln -s ~/dotfiles/dotnvim "$conf_dir/nvim"
 ```
 
+Now start Neovim and wait for plugins to auto-install.  After plugins
+finish installing, run command `:checkhealth` in Neovim to verify that
+everything is set up correctly, and you're good to go!
+
 ## Prerequisite Details
 
 This section contains details on setting up the prerequisites listed above.
