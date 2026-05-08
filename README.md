@@ -63,7 +63,7 @@ everything is set up correctly, and you're good to go!
 
 This section contains details on setting up the prerequisites listed above.
 The main purpose is to document the steps I took in the past to set things
-up, so as to prevent spending hours re-googling steps I've already figured
+up, so as to prevent spending hours re-googling steps I'd already figured
 out the hard way.
 
 ### Setting up Git Bash on Windows
