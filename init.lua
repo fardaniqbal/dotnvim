@@ -67,6 +67,8 @@ vim.o.wildmenu = true       -- show matches for command line TAB-completion
 vim.o.winborder = 'rounded' -- default border style for floating windows
 vim.o.updatetime = 250      -- decrease update time
 vim.o.timeoutlen = 300      -- wait this many milliseconds for key sequence
+vim.opt.foldlevel = 99      -- almost all fold levels expanded by default
+vim.opt.foldlevelstart = 99 -- same, but for new buffers
 
 -- Tab/indent settings.
 vim.o.expandtab = true  -- spaces, not tabs (<ctrl-v TAB> inserts real tab)
@@ -1001,14 +1003,10 @@ require('lazy').setup({
 
         -- Enable treesitter based folds
         -- For more info on folds see `:help folds`
-        -- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-        -- vim.wo.foldmethod = 'expr'
-        --[[
         if vim.treesitter.query.get(language, "folds") ~= nil then
           vim.wo.foldmethod = "expr"
           vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
         end
-        --]]
 
         -- Check if treesitter indentation is available for this language, and if so enable it.
         -- In case there is no indent query, the indentexpr will fallback to the vim's built in one.
