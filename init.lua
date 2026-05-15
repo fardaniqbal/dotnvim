@@ -363,6 +363,7 @@ require('lazy').setup({
     'mvllow/modes.nvim',
     event = { 'VeryLazy', 'ModeChanged' },
     version = '0.3.*',  --tag = 'v0.2.1',
+    enabled = false, -- disable until glitchy which-key interference gets fixed
     config = function()
       require('modes').setup {
         -- Set opacity for cursorline and number background

@@ -23,6 +23,8 @@
   packages (in addition to where it already searches).
 - [ ] Auto-refresh neo-tree when files are added/deleted/changed. (Neo-tree
   has a built-in setting for this called `use_libuv_file_watcher`).
+- [ ] Re-enable 'mvllow/modes.nvim' plugin _after_ they fix its glitchy
+  interaction with 'which-key'.
 - [x] FIXME: when opening a file from neo-tree with its preview mode
   enabled (SHIFT-P), the window in which the file opens has the same
   background color as neo-tree instead of the normal window background.
