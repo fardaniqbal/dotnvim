@@ -29,6 +29,7 @@ local setup_refresh_timer = function()
 
     -- Listing 'LspProgress' here is not enough for 'lsp_status' spinner.
     -- TODO: refresh repeatedly at ~10 fps _only_ while LSP is processing.
+    -- See :h LspProgress for ideas.
     --"LspProgress",
   }
   local REFRESH_DEBOUNCE_TIME = 20  -- minimum milliseconds between refreshes
