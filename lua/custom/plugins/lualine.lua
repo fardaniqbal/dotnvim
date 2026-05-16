@@ -26,6 +26,10 @@ local setup_refresh_timer = function()
     "CursorMoved",
     "CursorMovedI",
     "ModeChanged",
+
+    -- Listing 'LspProgress' here is not enough for 'lsp_status' spinner.
+    -- TODO: refresh repeatedly at ~10 fps _only_ while LSP is processing.
+    --"LspProgress",
   }
   local REFRESH_DEBOUNCE_TIME = 20  -- minimum milliseconds between refreshes
 
@@ -73,13 +77,6 @@ return {
   event = 'UIEnter',
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   config = function()
-    -- Custom component 'my_filetype' - like Lualine's built-in 'filetype'
-    -- component, but use Unicode icon instead of nerdfont icon.  Don't
-    -- want to make coworkers install a nerdfont just for tmux sharing.
-    local my_filetype = function()
-      return '⠿ ' .. vim.bo.filetype
-    end
-
     require('lualine').setup {
     options = {
       icons_enabled = true,
@@ -98,7 +95,7 @@ return {
         refresh_time = 10000  -- default 16
       },
       disabled_filetypes = {
-        statusline = {'neo-tree'},
+        --statusline = {'neo-tree'},
       },
     },
     -- To see defaults run `:h lualine-Default-configuration`.
@@ -111,8 +108,9 @@ return {
       lualine_x = {
         {'encoding', show_bomb = true}, -- show_bomb: byte order mark
         {'fileformat', symbols = {unix="unix", dos="dos", mac="mac"}},
-        --{'filetype', icons_enabled = false},
-        {my_filetype} --{my_filetype, color = {fg='#99cc66'}},
+        {function() return '⠿ ' .. vim.bo.filetype end}, -- 'filetype' with custom icon
+        --{'filetype', color = {fg='#99cc66'}},
+        --{'lsp_status'}, -- TODO: tweak refresh logic to make LSP spinner updates work
       },
     },
     --[[ -- inactive_sections is relevant only if globalstatus = false
@@ -125,6 +123,21 @@ return {
       lualine_z = {'location'},                           -- default = {}
     },
     --]]
+    extensions = {
+      -- In addition to listing extensions here, we can also define
+      -- filetype-specific lualine configs here.  Example: to override
+      -- the global config only for C and C++ files, we can do:
+      --     {
+      --       filetypes = {'c', 'cpp'},
+      --       sections = {
+      --         lualine_a = { ... },
+      --         lualine_b = { ... },
+      --       },
+      --     }
+      -- This effectively defines a custom extension inline.  For more
+      -- info see :h lualine-Custom-extensions.
+      { filetypes = {'NvimTree', 'neo-tree'}, sections = {} }, -- blank lualine for tree sidebars
+    },
     }
 
     setup_refresh_timer()
