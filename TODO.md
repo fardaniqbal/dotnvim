@@ -8,6 +8,7 @@
   section below).
 - [ ] (Ongoing): continue to improve startup times with lazy loading.
 - [ ] lualine: disable status line on greeter screen.
+- [x] lualine: blank solid lualine for tree sidebars (neo-tree, NvimTree).
 - [ ] Make `Telescope buffers` (`<leader><leader>`) open with the current
   buffer selected.
 - [ ] Make telescope include hidden files in its search results by default.
@@ -81,6 +82,7 @@
 - [x] For completion popup menus and inline code hints, change their
   background color and/or add a border to make it easier to visually
   distinguish them from actual buffer contents.
+- [x] Make copy/paste work on WSL.
 
 ## Bottlenecks
 

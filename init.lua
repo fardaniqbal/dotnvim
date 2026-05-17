@@ -45,9 +45,26 @@ vim.o.showmode = false
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
---  Remove this option if you want your OS clipboard to remain independent.
---  See `:help 'clipboard'`
+--  Remove this to keep OS clipboard independent.  See `:help 'clipboard'`.
 vim.schedule(function()
+  -- XXX: on WSL, setting clipboard = 'unnamedplus' causes massive lag on
+  -- first invocation of curtain commands (even cursor move), because
+  -- 'unnamedplus' triggers a search for clipboard commands.  Prevent this
+  -- lag by manualy setting vim.g.clipboard BEFORE setting 'unnamedplus'.
+  -- Based on https://github.com/neovim/neovim/discussions/28010#discussioncomment-9877494
+  if vim.fn.has("wsl") == 1 then
+    local function paste() return {
+      vim.fn.split(vim.fn.getreg(""), "\n"),
+      vim.fn.getregtype(""),
+    }
+    end
+    local copy = require("vim.ui.clipboard.osc52").copy
+    vim.g.clipboard = {
+      name = "OSC 52",
+      copy =  { ["+"] = copy("+"), ["*"] = copy("*") },
+      paste = { ["+"] = paste,     ["*"] = paste },
+    }
+  end
   vim.o.clipboard = 'unnamedplus'
 end)
 
