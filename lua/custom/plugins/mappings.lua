@@ -49,4 +49,22 @@ vim.keymap.set('t', '<c-k>', '<cmd>TmuxNavigateUp<cr>')
 vim.keymap.set('t', '<c-l>', '<cmd>TmuxNavigateRight<cr>')
 vim.keymap.set('t', '<c-\\>', '<cmd>TmuxNavigatePrevious<cr>')
 
+-- Keymaps to start/stop manual profiling.
+-- local which_key = require('which-key')
+-- wk.register({ p = { name = "Perf Profiling" } }, { prefix = "<leader>u" })
+vim.keymap.set("n", "<leader>ups", function()
+  vim.cmd([[
+    :profile start /tmp/nvim-profile.log
+    :profile func *
+    :profile file *
+  ]])
+end, { desc = "Profile Start" })
+
+vim.keymap.set("n", "<leader>upe", function()
+  vim.cmd([[
+    :profile stop
+    :e /tmp/nvim-profile.log
+  ]])
+end, { desc = "Profile End" })
+
 return {}
