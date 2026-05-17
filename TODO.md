@@ -83,6 +83,7 @@
   background color and/or add a border to make it easier to visually
   distinguish them from actual buffer contents.
 - [x] Make copy/paste work on WSL.
+- [ ] Make copy/paste work inside tmux on WSL.
 
 ## Bottlenecks
 
