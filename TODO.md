@@ -1,6 +1,14 @@
 ## Main TODO List
 
-- [ ] Suppress "Press ENTER" prompts.  Causes trouble with LSP startup,
+- [ ] When opening .sh scripts, automatically `:set filetype=bash`.
+  (Currently defaults to `filetype=sh`, which doesn't start bash LSP.)
+- [ ] Get tree-sitter working on Windows/Git Bash.
+  - Fails to compile parsers with Zig.
+  - Fails to compile parsers using the winget version of Visual Studio
+    Community Edition.
+  - Should work with a hybrid Git Bash/MSYS2 setup, but this is a
+    frankenstein solution that should only be a last resort.
+- [x] Suppress "Press ENTER" prompts.  Causes trouble with LSP startup,
   etc.
 - [ ] Add a plugin that integrates with Tmux's session saver.
   - Still in progress.  See `session.lua`.
@@ -8,6 +16,7 @@
   section below).
 - [ ] (Ongoing): continue to improve startup times with lazy loading.
 - [ ] lualine: disable status line on greeter screen.
+- [ ] MAYBE: set up a greeter/dashboard.  Probably not worth it though.
 - [x] lualine: blank solid lualine for tree sidebars (neo-tree, NvimTree).
 - [ ] Make `Telescope buffers` (`<leader><leader>`) open with the current
   buffer selected.
@@ -15,13 +24,29 @@
   Something like `require("telescope.builtin").find_files({hidden=true})`.
 - [ ] Set up dadbod and related plugins for interactive SQL.
   - See TJ DeVries' video: https://youtu.be/ALGBuFLzDSA?si=ugl13sHmgF5FKLhI
-- [ ] Set up a greeter/dashboard.
 - [x] Automatically go into insert mode when entering a terminal window.
 - [x] Disable line numbers and sign column in terminal windows.
-- [x] Set up JDTLS (Java LSP).
-- [ ] Make JDTLS search for JDK installations under /opt.
-- [x] Make JDTLS search for JDK installations wherever sdkman installs its
-  packages (in addition to where it already searches).
+- [ ] Set up DAP (Debug Adaptor Protocol).  Languages:
+  - [ ] C/C++
+  - [ ] Zig
+  - [ ] Rust
+  - [ ] Java
+  - [ ] Javascript/Typescript
+  - [ ] Python
+- [ ] Set up JDTLS (Java LSP).
+  - [x] Make basic LSP features work (goto definition, goto implementation,
+  autocomplete, hover documentation, etc.)
+  - [ ] Search for JDK installations under /opt.
+  - [x] Search for JDK installations in `~/.sdkman`.
+    - [ ] Search `$SDKMAN_DIR` in addition to `~/.sdkman`.
+  - [x] Search for JDK installations in standard Windows install dirs.
+  - [ ] Search for JDK installations in standard Mac OS install dirs,
+    including Homebrew dirs, MacPorts dirs, and "official" install dirs.
+  - [ ] Make debugger work.  References:
+    * https://github.com/nvim-java/nvim-java
+    * https://github.com/NormalNvim/NormalNvim
+    * https://miguelcrespo.co/posts/how-to-debug-like-a-pro-using-neovim
+    * Search internet for "VSCode launch.json" reference.
 - [ ] Auto-refresh neo-tree when files are added/deleted/changed. (Neo-tree
   has a built-in setting for this called `use_libuv_file_watcher`).
 - [ ] Re-enable 'mvllow/modes.nvim' plugin _after_ they fix its glitchy
