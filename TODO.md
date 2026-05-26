@@ -42,7 +42,7 @@
   - [x] Search for JDK installations in standard Windows install dirs.
   - [ ] Search for JDK installations in standard Mac OS install dirs,
     including Homebrew dirs, MacPorts dirs, and "official" install dirs.
-  - [ ] Make debugger work.  References:
+  - [x] Make debugger work.  References:
     * https://github.com/nvim-java/nvim-java
     * https://github.com/NormalNvim/NormalNvim
     * https://miguelcrespo.co/posts/how-to-debug-like-a-pro-using-neovim

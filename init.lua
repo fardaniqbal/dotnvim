@@ -1097,7 +1097,8 @@ require('lazy').setup({
   -- require 'custom.plugins.neoscroll',
   -- require 'custom.plugins.session', -- TODO: session saver still needs work
   --require 'custom.plugins.smear-cursor',
-  require 'custom.plugins.nvim-jdtls',
+  --require 'custom.plugins.nvim-jdtls',
+  require 'custom.plugins.java',
   -- Or just do `{ import = 'custom.plugins' }` to load all
   -- `lua/custom/plugins/*.lua` files in alphabetical order.
   --
