@@ -14,6 +14,8 @@
   - Still in progress.  See `session.lua`.
 - [ ] Eliminate idle CPU hogging by "which-key" plugin.  (See "Bottlenecks"
   section below).
+- [ ] Enable cursorline _only_ on focused window.  Make an exception for
+  neotree window, which should always highlight the focused window's file.
 - [ ] (Ongoing): continue to improve startup times with lazy loading.
 - [ ] lualine: disable status line on greeter screen.
 - [ ] MAYBE: set up a greeter/dashboard.  Probably not worth it though.
