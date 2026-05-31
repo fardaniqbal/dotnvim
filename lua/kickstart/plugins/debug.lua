@@ -65,9 +65,7 @@ return {
       --    Feel free to remove or use ones that you like more! :)
       --    Don't feel like these are good choices.
       icons = vim.g.have_nerd_font and {} or {
-        expanded = '⏷', -- '▾',
-        collapsed = '⏵', -- '▸',
-        current_frame = '▷', -- '*',
+        expanded = '▾', collapsed = '▸', current_frame = '*',
       },
       ---@diagnostic disable-next-line: missing-fields
       controls = {
@@ -90,7 +88,7 @@ return {
     vim.api.nvim_set_hl(0, 'DapStop', { fg = '#ffcc00' })
     local breakpoint_icons = false and vim.g.have_nerd_font
       and { Breakpoint = '', BreakpointCondition = '', BreakpointRejected = '', LogPoint = '', Stopped = '' }
-      or  { Breakpoint = '⬤', BreakpointCondition = '⭘', BreakpointRejected = '⭙', LogPoint = '🞛', Stopped = '🡪' }
+      or  { Breakpoint = '●', BreakpointCondition = '◇', BreakpointRejected = '⭙', LogPoint = '◆', Stopped = '🡪' }
     for type, icon in pairs(breakpoint_icons) do
       local tp = 'Dap' .. type
       local hl = (type == 'Stopped') and 'DapStop' or 'DapBreak'
