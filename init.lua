@@ -588,16 +588,6 @@ require('lazy').setup({
         end,
       })
 
-      -- Change diagnostic symbols in the sign column (gutter)
-      -- if vim.g.have_nerd_font then
-      --   local signs = { ERROR = '', WARN = '', INFO = '', HINT = '' }
-      --   local diagnostic_signs = {}
-      --   for type, icon in pairs(signs) do
-      --     diagnostic_signs[vim.diagnostic.severity[type]] = icon
-      --   end
-      --   vim.diagnostic.config { signs = { text = diagnostic_signs } }
-      -- end
-
       -- Diagnostic Config
       -- See :help vim.diagnostic.OptsAdd
       vim.diagnostic.config {
@@ -605,16 +595,19 @@ require('lazy').setup({
         float = { border = 'rounded', source = 'if_many' },
         underline = { severity = vim.diagnostic.severity.ERROR },
         -- Uncomment this `signs = ...` block to make diagnostics use nerdfont icons.
-        --[[
-        signs = vim.g.have_nerd_font and {
-          text = {
-            [vim.diagnostic.severity.ERROR] = '󰅚 ',
-            [vim.diagnostic.severity.WARN] = '󰀪 ',
-            [vim.diagnostic.severity.INFO] = '󰋽 ',
-            [vim.diagnostic.severity.HINT] = '󰌶 ',
+        signs = {
+          text = vim.g.have_nerd_font and {
+            [vim.diagnostic.severity.ERROR] = ' ', -- '󰅚 ',
+            [vim.diagnostic.severity.WARN] = ' ', -- '󰀪 ',
+            [vim.diagnostic.severity.INFO] = '󰋼 ', -- '󰋽 ',
+            [vim.diagnostic.severity.HINT] = '󰌵 ', -- '󰌶 ',
+          } or {
+            [vim.diagnostic.severity.ERROR] = '⭙ ',
+            [vim.diagnostic.severity.WARN] = '⛛ ',
+            [vim.diagnostic.severity.INFO] = '🛈 ',
+            [vim.diagnostic.severity.HINT] = '🟆 ',
           },
-        } or {},
-        --]]
+        },
         virtual_text = {
           source = 'if_many',
           spacing = 2,
