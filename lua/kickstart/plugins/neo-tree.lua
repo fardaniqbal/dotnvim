@@ -3,7 +3,9 @@
 
 -- True if Vim was started with any directories on the command line.
 local vim_started_with_dirs = (function()
-  for _, arg in pairs(vim.v.argf) do -- argf has ONLY file/path args; no --flags
+  -- Neovim 0.12 introduced `vim.v.argf`.  Use `vim.fn.argv()` otherwise.
+  -- Both of them return command line arguments WITHOUT --flags.
+  for _, arg in pairs(vim.v.argf or vim.fn.argv()) do
     if vim.fn.isdirectory(arg) ~= 0 then return true end
   end
   return false
