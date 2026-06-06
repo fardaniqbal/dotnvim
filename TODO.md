@@ -1,19 +1,42 @@
 ## Main TODO List
 
-- [ ] When opening .sh scripts, automatically `:set filetype=bash`.
-  (Currently defaults to `filetype=sh`, which doesn't start bash LSP.)
+### High Priority
+
+- [ ] Add a plugin that integrates with Tmux's session saver.
+  - Still in progress.  See `session.lua`.
 - [ ] Get tree-sitter working on Windows/Git Bash.
   - Fails to compile parsers with Zig.
   - Fails to compile parsers using the winget version of Visual Studio
     Community Edition.
   - Should work with a hybrid Git Bash/MSYS2 setup, but this is a
     frankenstein solution that should only be a last resort.
+  - [ ] Get [devops-setup](https://github.com/fardaniqbal/devops-setup)
+    script to set up a working C/C++ build environment on Windows.
+
+### Unprioritized
+
+- [ ] Set `vim.g.have_nerd_font` based on environment variable.
+  - [ ] CONDITIONALLY set this environment variable in ~/.bashrc.
+    * Are we on local machine?  Then enable nerd font.
+    * Are we SSH'd into a remote host AND the host from which we SSH'd has
+      the nerd font environment variable enabled?  Then enable nerd font.
+    * Otherwise _do not_ enable nerd font.
+- [ ] Prevent nested Neovim instances (e.g., when opening Neovim from
+  built-in `:terminal`).
+  - [ ] Handle things like `git commit`, which block until the editor exits
+    (see [nvim-unception](https://github.com/samjwill/nvim-unception),
+    which uses Neovim's `QuitPre` event to handle this)
+  - Shouldn't need a plugin to handle this, but see these for ideas:
+    * [nvim-unception](https://github.com/samjwill/nvim-unception)
+    * [neovim-remote](https://github.com/mhinz/neovim-remote)
+    * [flatten.nvim](https://github.com/willothy/flatten.nvim)
+- [ ] When opening .sh scripts, automatically `:set filetype=bash`.
+  (Currently defaults to `filetype=sh`, which doesn't start bash LSP.)
 - [x] Suppress "Press ENTER" prompts.  Causes trouble with LSP startup,
   etc.
-- [ ] Add a plugin that integrates with Tmux's session saver.
-  - Still in progress.  See `session.lua`.
 - [ ] Eliminate idle CPU hogging by "which-key" plugin.  (See "Bottlenecks"
   section below).
+- [ ] Make neotree sidebar open on RIGHT instead of LEFT.
 - [ ] Enable cursorline _only_ on focused window.  Make an exception for
   neotree window, which should always highlight the focused window's file.
 - [ ] (Ongoing): continue to improve startup times with lazy loading.
@@ -28,13 +51,16 @@
   - See TJ DeVries' video: https://youtu.be/ALGBuFLzDSA?si=ugl13sHmgF5FKLhI
 - [x] Automatically go into insert mode when entering a terminal window.
 - [x] Disable line numbers and sign column in terminal windows.
-- [ ] Set up DAP (Debug Adaptor Protocol).  Languages:
-  - [ ] C/C++
-  - [ ] Zig
-  - [ ] Rust
-  - [ ] Java
-  - [ ] Javascript/Typescript
-  - [ ] Python
+- [ ] Set up DAP (Debug Adaptor Protocol).
+  - Languages:
+    * [ ] C/C++
+    * [ ] Zig
+    * [ ] Rust
+    * [ ] Java
+    * [ ] Javascript/Typescript
+    * [ ] Python
+  - [ ] When debugging, show variable values inline using
+    [nvim-dap-virtual-text](https://github.com/theHamsta/nvim-dap-virtual-text)
 - [ ] Set up JDTLS (Java LSP).
   - [x] Make basic LSP features work (goto definition, goto implementation,
   autocomplete, hover documentation, etc.)
