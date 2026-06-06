@@ -18,6 +18,10 @@ elseif vim.fn.filereadable(vim.fn.expand '~/.vim/vimrc') ~= 0 then
 end
 --]]
 
+-- Uncomment the following to enable vim.loader (Neovim 0.9+).  Can improve
+-- startup times.  WARNING: vim.loader is experimental as of Neovim 0.12.
+if vim.fn.has 'nvim-0.9' == 1 then vim.loader.enable() end
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
