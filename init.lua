@@ -28,8 +28,12 @@ if vim.fn.has 'nvim-0.9' == 1 then vim.loader.enable() end
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = true
+do
+  local env_nerdfonts = os.getenv('NERDFONTS') or ''
+  local env_nerd_font = os.getenv('NERD_FONT') or ''
+  -- Set to true if you have a Nerd Font installed and selected in the terminal
+  vim.g.have_nerd_font = env_nerdfonts == 'true' or env_nerd_font == '1'
+end
 
 -- [[ Setting options ]]
 -- See `:help vim.o`

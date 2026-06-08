@@ -15,8 +15,8 @@
 
 ### Unprioritized
 
-- [ ] Set `vim.g.have_nerd_font` based on environment variable.
-  - [ ] CONDITIONALLY set this environment variable in ~/.bashrc.
+- [x] Set `vim.g.have_nerd_font` based on environment variable.
+  - [x] CONDITIONALLY set this environment variable in ~/.bashrc.
     * Are we on local machine?  Then enable nerd font.
     * Are we SSH'd into a remote host AND the host from which we SSH'd has
       the nerd font environment variable enabled?  Then enable nerd font.
