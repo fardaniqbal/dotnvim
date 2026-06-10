@@ -21,6 +21,15 @@
     * Are we SSH'd into a remote host AND the host from which we SSH'd has
       the nerd font environment variable enabled?  Then enable nerd font.
     * Otherwise _do not_ enable nerd font.
+- [ ] UI Tweaks:
+  - [ ] Enable cursorline _only_ on focused window.  Make an exception for
+    neotree window, which must always highlight the focused window's file.
+  - [ ] DAP: don't show statusbar at bottom of dap-ui windows.  Show them
+    at the top instead (using winbar?  tabbar?)  Based on `filetype`.
+  - [ ] DAP: use nerd font icons for expand/colapse items in dap-ui.
+  - [x] Suppress "Press ENTER" prompts.  Causes trouble with LSP startup,
+    etc.
+- [ ] Add code auto-formatting (see prettierd, clang-format, etc).
 - [ ] Prevent nested Neovim instances (e.g., when opening Neovim from
   built-in `:terminal`).
   - [ ] Handle things like `git commit`, which block until the editor exits
@@ -32,14 +41,12 @@
     * [flatten.nvim](https://github.com/willothy/flatten.nvim)
 - [ ] When opening .sh scripts, automatically `:set filetype=bash`.
   (Currently defaults to `filetype=sh`, which doesn't start bash LSP.)
-- [x] Suppress "Press ENTER" prompts.  Causes trouble with LSP startup,
-  etc.
 - [ ] Eliminate idle CPU hogging by "which-key" plugin.  (See "Bottlenecks"
   section below).
 - [ ] Make neotree sidebar open on RIGHT instead of LEFT.
-- [ ] Enable cursorline _only_ on focused window.  Make an exception for
-  neotree window, which should always highlight the focused window's file.
 - [ ] (Ongoing): continue to improve startup times with lazy loading.
+  - [ ] Determine what causes extra startup lag _after_ initial UI startup
+    when starting Neovim with, e.g., a bash script on the command line.
 - [ ] lualine: disable status line on greeter screen.
 - [ ] MAYBE: set up a greeter/dashboard.  Probably not worth it though.
 - [x] lualine: blank solid lualine for tree sidebars (neo-tree, NvimTree).
