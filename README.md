@@ -144,7 +144,7 @@ You'll need Nodejs and npm for some of the language servers.
   MinGW/MSYS2** (replace `PREFIX=...` with your preferred install
   location):
   ```bash
-  PREFIX="$HOME/local"
+  PREFIX="${PREFIX:-$HOME/local}"
   mkdir -p "$PREFIX" &&
   cd "$PREFIX" &&
   curl -kL "https://nodejs.org/dist/v24.15.0/node-v24.15.0-win-x64.zip -O &&
@@ -170,8 +170,35 @@ You'll need Nodejs and npm for some of the language servers.
   ```bash
   # TODO: port command to install Nodejs/npm
   ```
-- **Linux:** **TODO:** instructions to automate installation on common
-  distros - Ubuntu/DEB-based, RedHat/RPM-based, and Arch/pacman-based.
+- **Linux:** install by running the following **in bash** (replace
+  `PREFIX=...` with your preferred install location):
+  ```bash
+  (set -eo pipefail
+  PREFIX="${PREFIX:-$HOME/local}"
+  PKG="node-v24.16.0-linux-x64"
+  mkdir -p "$PREFIX"; [ -d "$PREFIX" ]
+  mytmpdir="$(TMPDIR="$HOME" mktemp -d -t "tmp.XXXXXX")"
+  trap 'rm -rf "$mytmpdir"' EXIT
+  curl -kL "https://nodejs.org/dist/v24.16.0/$PKG.tar.xz" \
+    > "$mytmpdir/$PKG.tar.xz"
+  cd "$mytmpdir"
+  tar xvJf "$PKG.tar.xz"
+  rm -rf "$PKG.tar.xz"
+  for d in "$PREFIX"/node-*-linux-x64/; do
+    [ -d "$d" ] && rm -rf "$d" || :
+  done
+  mv * "$PREFIX"
+
+  # Add node/npm to PATH if your bashrc doesn't already do it.
+  "$BASH" -li -c 'which node >/dev/null 2>&1' ||
+  (bindir="$(for i in "$PREFIX"/*/bin/node; do
+    [ -x "$i" ] || continue
+    (cd "$(dirname "$i")" && pwd)
+  done | tail -n1)"
+  [ -d "$bindir" ]
+  printf 'export PATH="%s:$PATH"\n' "$bindir" >> ~/.bashrc)) &&
+  echo 'SUCCESS' || (echo 'ERROR installing nodejs/npm' >&2; false)
+  ```
 
 After installing Nodejs/npm, run `npm install -g neovim`.  If you don't
 have root/admin access, run `echo "prefix=$HOME/local/npm-packages" >>
