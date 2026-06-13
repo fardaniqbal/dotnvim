@@ -153,7 +153,7 @@ You'll need Nodejs and npm for some of the language servers.
   mkdir -p "$PREFIX"
   ([ -d "$PREFIX" ] || ( echo "ERROR: cannot mkdir '$PREFIX'"; exit 1))
   cd "$PREFIX"
-  curl -kL "https://nodejs.org/dist/v$TAG/$PKG.zip" -O
+  curl -kfL "https://nodejs.org/dist/v$TAG/$PKG.zip" -O
   unzip "$PKG.zip"
   /bin/rm -f "$PKG.zip"
   node_dir="$(cd "$(ls -1trd node-*/ | tail -n1)" && pwd)"
@@ -186,7 +186,7 @@ You'll need Nodejs and npm for some of the language servers.
   mkdir -p "$PREFIX"; [ -d "$PREFIX" ]
   mytmpdir="$(TMPDIR="$HOME" mktemp -d -t "tmp.XXXXXX")"
   trap 'rm -rf "$mytmpdir"' EXIT
-  curl -kL "https://nodejs.org/dist/v24.16.0/$PKG.tar.xz" \
+  curl -kfL "https://nodejs.org/dist/v24.16.0/$PKG.tar.xz" \
     > "$mytmpdir/$PKG.tar.xz"
   cd "$mytmpdir"
   tar xvJf "$PKG.tar.xz"
@@ -222,7 +222,7 @@ You'll need `tree-sitter` for accurate syntax highlighting.
   PREFIX="$HOME/local/bin"
   mkdir -p "$PREFIX" &&
   cd "$PREFIX" &&
-  curl -kL "https://github.com/tree-sitter/tree-sitter/releases/download/v0.26.8/tree-sitter-cli-windows-x64.zip" -O &&
+  curl -kfL "https://github.com/tree-sitter/tree-sitter/releases/download/v0.26.8/tree-sitter-cli-windows-x64.zip" -O &&
   unzip tree-sitter-cli-windows-x64.zip &&
   /bin/rm -f tree-sitter-cli-windows-x64.zip &&
 
@@ -287,7 +287,7 @@ For Java integration, you'll need the following executables installed:
 assumes you use `sdkman` to install them.  Run this in Bash to install
 `sdkman`:
 ```bash
-curl -skL "https://get.sdkman.io" | bash
+curl -kfsL "https://get.sdkman.io" | bash
 ```
 Then use `sdkman` to install an LTS JDK, **at least version 25**:
 ```bash
@@ -327,7 +327,7 @@ export TMPDIR="${TMPDIR:-${TMP:-/tmp}}"
 mkdir -p "$PREFIX" && cd "$PREFIX" &&
 
 # Scrape latest zig version from its index.json file.
-zig_index="$(curl -kL "https://ziglang.org/download/index.json")" &&
+zig_index="$(curl -kfL "https://ziglang.org/download/index.json")" &&
 scraped="$(printf '%s' "$zig_index" | awk '
   BEGIN { found_ver=0; found_url=0; found_plat=0 }
   found_ver==0  && /^ *"[0-9]+(\.[0-9]+)+" *: *{ *$/ { found_ver=1; print "ver: "$1 }
@@ -344,7 +344,7 @@ if [[ "$zig_url" != http?://* ]]; then
   echo "ERROR: could not scrape zig url: '%zig_url'"
 else
   echo "Installing zig $zig_ver from '$zig_url'..."
-  curl -kL -o "$TMPDIR/zig-$zig_ver.zip" "$zig_url" &&
+  curl -kfL -o "$TMPDIR/zig-$zig_ver.zip" "$zig_url" &&
   unzip -uC "$TMPDIR/zig-$zig_ver.zip" &&
   /bin/rm -f "$TMPDIR/zig-$zig_ver.zip" &&
   [ -x */zig.exe ] && zig_bin="$(echo */zig.exe)"
