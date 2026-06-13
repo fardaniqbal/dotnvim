@@ -144,13 +144,19 @@ You'll need Nodejs and npm for some of the language servers.
   MinGW/MSYS2** (replace `PREFIX=...` with your preferred install
   location):
   ```bash
-  PREFIX="${PREFIX:-$HOME/local}"
-  mkdir -p "$PREFIX" &&
-  cd "$PREFIX" &&
-  curl -kL "https://nodejs.org/dist/v24.15.0/node-v24.15.0-win-x64.zip -O &&
-  unzip node-v24.15.0-win-x64.zip" &&
-  /bin/rm -f node-v24.15.0-win-x64.zip &&
-  node_dir="$(cd "$(ls -1trd node-* | tail -n1)" && pwd)" &&
+  (set -eo pipefail
+  USERPROFILE="$(cmd.exe //c 'echo %USERPROFILE%' | tr -d $'\r')"
+  PREFIX="${PREFIX:-$USERPROFILE/local}"
+  PREFIX="$(cygpath -u "$PREFIX")"
+  TAG="24.15.0"
+  PKG="node-v$TAG-win-x64"
+  mkdir -p "$PREFIX"
+  ([ -d "$PREFIX" ] || ( echo "ERROR: cannot mkdir '$PREFIX'"; exit 1))
+  cd "$PREFIX"
+  curl -kL "https://nodejs.org/dist/v$TAG/$PKG.zip" -O
+  unzip "$PKG.zip"
+  /bin/rm -f "$PKG.zip"
+  node_dir="$(cd "$(ls -1trd node-*/ | tail -n1)" && pwd)"
 
   # Add node, npm, npx, etc to PATH _only_ if it's not already there:
   win_path_munge() {
@@ -160,7 +166,8 @@ You'll need Nodejs and npm for some of the language servers.
     powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
       "[Environment]::SetEnvironmentVariable('PATH',\"$(cygpath -wl "$1");$winpath\",'User');")
   }
-  win_path_munge "$node_dir" && echo 'SUCCESS' || echo 'FAIL'
+  win_path_munge "$node_dir") &&
+  echo 'SUCCESS' || (echo 'ERROR installing nodejs/npm' >&2; false)
   ```
 - **Mac OS:** you can use install using Homebrew:
   ```bash
