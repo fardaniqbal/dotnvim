@@ -123,6 +123,10 @@ vim.o.list = true
 vim.opt.listchars = { tab = '» ', trail = '•', nbsp = '␣' }
 vim.cmd "match errorMsg /\\s\\+$/"
 
+-- Uncomment the following to enable undercurls for spelling mistakes.
+--vim.opt.spell = true
+--vim.opt.spelllang = { "en_us" }
+
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
 
