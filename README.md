@@ -144,23 +144,34 @@ You'll need Nodejs and npm for some of the language servers.
   MinGW/MSYS2** (replace `PREFIX=...` with your preferred install
   location):
   ```bash
-  (set -eo pipefail
+  (set -Eeo pipefail
   USERPROFILE="$(cmd.exe //c 'echo %USERPROFILE%' | tr -d $'\r')"
   PREFIX="${PREFIX:-$USERPROFILE/local}"
   PREFIX="$(cygpath -u "$PREFIX")"
-  TAG="24.15.0"
+  TAG="24.16.0"
   PKG="node-v$TAG-win-x64"
   mkdir -p "$PREFIX"
   ([ -d "$PREFIX" ] || ( echo "ERROR: cannot mkdir '$PREFIX'"; exit 1))
-  cd "$PREFIX"
-  curl -kfL "https://nodejs.org/dist/v$TAG/$PKG.zip" -O
-  unzip "$PKG.zip"
-  /bin/rm -f "$PKG.zip"
-  node_dir="$(cd "$(ls -1trd node-*/ | tail -n1)" && pwd)"
+
+  # Can have permission issues if tmpdir and $PREFIX are on different mounts.
+  mytmpdir="$(TMP="$PREFIX" TMPDIR="$TMP" mktemp -d -t "tmp.XXXXXX")"
+  trap "rm -rf \"$mytmpdir\"" EXIT
+  curl -kfL "https://nodejs.org/dist/v$TAG/$PKG.zip" \
+    > "$mytmpdir/$PKG.zip"
+  (cd "$mytmpdir" && unzip "$PKG.zip" && /bin/rm -f "$PKG.zip")
+
+  backupdir="$PREFIX/node-win-x64.$$.bak"
+  if [ -d "$PREFIX/node-win-x64" ]; then
+    mv "$PREFIX/node-win-x64" "$backupdir"
+  fi
+  mv "$mytmpdir"/* "$PREFIX/node-win-x64"
+  rm -rf "$backupdir" || :
 
   # Add node, npm, npx, etc to PATH _only_ if it's not already there:
+  node_dir="$(cd "$PREFIX/node-win-x64" && pwd)"
   win_path_munge() {
-    local winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
+    local winpath
+    winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
       -Command "\$([Environment]::GetEnvironmentVariable('PATH','User'))")" &&
     ([[ ";$winpath;" == *";$(cygpath -wl "$1");"* ]] ||
     powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
@@ -180,29 +191,31 @@ You'll need Nodejs and npm for some of the language servers.
 - **Linux:** install by running the following **in bash** (replace
   `PREFIX=...` with your preferred install location):
   ```bash
-  (set -eo pipefail
+  (set -Eeo pipefail
   PREFIX="${PREFIX:-$HOME/local}"
-  PKG="node-v24.16.0-linux-x64"
-  mkdir -p "$PREFIX"; [ -d "$PREFIX" ]
-  mytmpdir="$(TMPDIR="$HOME" mktemp -d -t "tmp.XXXXXX")"
-  trap 'rm -rf "$mytmpdir"' EXIT
-  curl -kfL "https://nodejs.org/dist/v24.16.0/$PKG.tar.xz" \
+  TAG="24.16.0"
+  PKG="node-v$TAG-linux-x64"
+  mkdir -p "$PREFIX"
+  ([ -d "$PREFIX" ] || ( echo "ERROR: cannot mkdir '$PREFIX'"; exit 1))
+
+  # Can have permission issues if tmpdir and $PREFIX are on different mounts.
+  mytmpdir="$(TMP="$PREFIX" TMPDIR="$TMP" mktemp -d -t "tmp.XXXXXX")"
+  trap "rm -rf \"$mytmpdir\"" EXIT
+  curl -kfL "https://nodejs.org/dist/v$TAG/$PKG.tar.xz" \
     > "$mytmpdir/$PKG.tar.xz"
-  cd "$mytmpdir"
-  tar xvJf "$PKG.tar.xz"
-  rm -rf "$PKG.tar.xz"
-  for d in "$PREFIX"/node-*-linux-x64/; do
-    [ -d "$d" ] && rm -rf "$d" || :
-  done
-  mv * "$PREFIX"
+  (cd "$mytmpdir" && tar xvJf "$PKG.tar.xz" && rm -rf "$PKG.tar.xz")
+
+  backupdir="$PREFIX/node-linux-x64.$$.bak"
+  if [ -d "$PREFIX/node-linux-x64" ]; then
+    mv "$PREFIX/node-linux-x64" "$backupdir"
+  fi
+  mv "$mytmpdir"/* "$PREFIX/node-linux-x64"
+  rm -rf "$backupdir" || :
 
   # Add node/npm to PATH if your bashrc doesn't already do it.
-  "$BASH" -li -c 'which node >/dev/null 2>&1' ||
-  (bindir="$(for i in "$PREFIX"/*/bin/node; do
-    [ -x "$i" ] || continue
-    (cd "$(dirname "$i")" && pwd)
-  done | tail -n1)"
-  [ -d "$bindir" ]
+  "$BASH" -li -c 'command -v node && [ -n "$(which node)" ]' ||
+  (bindir="$(cd "$PREFIX/node-linux-x64/bin" && pwd)"
+  [ -x "$bindir/node" ] || (echo "ERROR: no node binary in $bindir"; false)
   printf 'export PATH="%s:$PATH"\n' "$bindir" >> ~/.bashrc)) &&
   echo 'SUCCESS' || (echo 'ERROR installing nodejs/npm' >&2; false)
   ```
@@ -228,7 +241,8 @@ You'll need `tree-sitter` for accurate syntax highlighting.
 
   # Add tree-sitter to PATH _only_ if it's not already there:
   win_path_munge() {
-    local winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
+    local winpath
+    winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
       -Command "\$([Environment]::GetEnvironmentVariable('PATH','User'))")" &&
     ([[ ";$winpath;" == *";$(cygpath -wl "$1");"* ]] ||
     powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
@@ -384,7 +398,8 @@ else
   else
     # Add $PREFIX/bin to PATH _only_ if it's not already there:
     win_path_munge() {
-      local winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
+      local winpath
+      winpath="$(powershell.exe -NoProfile -ExecutionPolicy Bypass \
         -Command "\$([Environment]::GetEnvironmentVariable('PATH','User'))")" &&
       ([[ ";$winpath;" == *";$(cygpath -wl "$1");"* ]] ||
       powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
