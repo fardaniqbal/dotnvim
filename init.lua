@@ -319,7 +319,9 @@ require('lazy').setup({
     event = 'VeryLazy', -- set the loading event to 'VeryLazy'
     dependencies = {{ 'echasnovski/mini.icons', version = '*' }},
     opts = {
-      delay = 16, -- milliseconds between key press and opening which-key
+      delay = function(ctx)
+        return ctx.plugin and 0 or 250 -- millisecs between key press and opening which-key
+      end,
       icons = {
         -- set icon mappings to true if you have a Nerd Font
         mappings = vim.g.have_nerd_font,
