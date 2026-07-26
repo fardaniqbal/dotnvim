@@ -68,9 +68,9 @@ vim.schedule(function()
     -- 1.  Manualy set vim.g.clipboard BEFORE setting 'unnamedplus'.  This
     --     avoids the slow search required to auto-set vim.g.clipboard.
     --     Based on https://github.com/neovim/neovim/discussions/28010#discussioncomment-9877494
-    -- 2.  Don't set vim.g.clipboard to 'unnamedplus' at all.  Instead, set
-    --     up autocommands to sync the OS's clipboard with Neovim's internal
-    --     clipboard registers when gaining or losing focus.
+    -- 2.  Don't set 'unnamedplus' at all.  Instead, set up autocommands to
+    --     sync the OS's clipboard with Neovim's internal clipboard
+    --     registers when gaining or losing focus.
     --
     -- I'm not sure if one approach is definitively better than the other,
     -- so let's implement both, and use variable `MANUAL_VIM_G_CLIPBOARD`
