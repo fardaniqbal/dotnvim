@@ -144,7 +144,7 @@
   distinguish them from actual buffer contents.
 - [x] Make copy/paste work on WSL.  See
   https://github.com/neovim/neovim/discussions/28010#discussioncomment-9892446
-- [ ] Make copy/paste work inside tmux on WSL.
+- [x] Make copy/paste work inside tmux on WSL.
 
 ## Bottlenecks
 

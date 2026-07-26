@@ -55,25 +55,70 @@ vim.o.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this to keep OS clipboard independent.  See `:help 'clipboard'`.
 vim.schedule(function()
-  -- XXX: on WSL, setting clipboard = 'unnamedplus' causes massive lag on
-  -- first invocation of curtain commands (even cursor move), because
-  -- 'unnamedplus' triggers a search for clipboard commands.  Prevent this
-  -- lag by manualy setting vim.g.clipboard BEFORE setting 'unnamedplus'.
-  -- Based on https://github.com/neovim/neovim/discussions/28010#discussioncomment-9877494
-  if vim.fn.has("wsl") == 1 then
-    local function paste() return {
-      vim.fn.split(vim.fn.getreg(""), "\n"),
-      vim.fn.getregtype(""),
-    }
+  if vim.fn.has("wsl") == 0 and vim.fn.has("win32") == 0 then
+    -- Neovim's built-in support for OS clipboard works well enough on
+    -- Linux and Mac OS.
+    vim.o.clipboard = 'unnamedplus'
+  else
+    -- XXX: on WSL, setting clipboard = 'unnamedplus' causes massive lag on
+    -- first invocation of curtain commands (even cursor move), because
+    -- 'unnamedplus' triggers a search for clipboard commands.  We have a
+    -- few ways to prevent this.  Here are two:
+    --
+    -- 1.  Manualy set vim.g.clipboard BEFORE setting 'unnamedplus'.  This
+    --     avoids the slow search required to auto-set vim.g.clipboard.
+    --     Based on https://github.com/neovim/neovim/discussions/28010#discussioncomment-9877494
+    -- 2.  Don't set vim.g.clipboard to 'unnamedplus' at all.  Instead, set
+    --     up autocommands to sync the OS's clipboard with Neovim's internal
+    --     clipboard registers when gaining or losing focus.
+    --
+    -- I'm not sure if one approach is definitively better than the other,
+    -- so let's implement both, and use variable `MANUAL_VIM_G_CLIPBOARD`
+    -- to select which implementation to use:
+    local MANUAL_VIM_G_CLIPBOARD = false
+    if MANUAL_VIM_G_CLIPBOARD then
+      -- Workaround by manually setting vim.g.clipboard.
+      local function paste() return {
+        vim.fn.split(vim.fn.getreg(""), "\n"),
+        vim.fn.getregtype(""),
+      }
+      end
+      local copy = require("vim.ui.clipboard.osc52").copy
+      vim.g.clipboard = {
+        name = "OSC 52",
+        copy =  { ["+"] = copy("+"), ["*"] = copy("*") },
+        paste = { ["+"] = paste,     ["*"] = paste },
+        --cache_enabled = false
+      }
+      vim.o.clipboard = 'unnamedplus'
+    else
+      -- Workaround by syncing with OS clipboard on focus change.
+      local grab_sys_clipboard = function(do_async)
+        local on_complete = function(res)
+          if res and res.signal == 0 and res.code == 0 then
+            vim.fn.setreg("", res.stdout)
+          end
+        end
+        local ok, sysobj = pcall(vim.system, {
+          'powershell.exe', '-NoLogo', '-NoProfile', '-c',
+          '[Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))'
+        }, { text = true }, do_async and vim.schedule_wrap(on_complete) or nil)
+        if not do_async then on_complete(ok and sysobj:wait()) end
+      end
+      grab_sys_clipboard(true) -- grab OS clipboard asynchronously to reduce startup cost
+
+      vim.api.nvim_create_autocmd("FocusGained", {
+        group = vim.api.nvim_create_augroup("custom-clipboard-focus-gained", { clear = true }),
+        callback = function() grab_sys_clipboard(false) end,
+      })
+      vim.api.nvim_create_autocmd({ "FocusLost", "VimLeavePre" }, {
+        group = vim.api.nvim_create_augroup("custom-clipboard-focus-lost", { clear = true }),
+        callback = function()
+          pcall(vim.system, { 'clip.exe' }, { stdin = vim.fn.getreg(""), detach = true })
+        end,
+      })
     end
-    local copy = require("vim.ui.clipboard.osc52").copy
-    vim.g.clipboard = {
-      name = "OSC 52",
-      copy =  { ["+"] = copy("+"), ["*"] = copy("*") },
-      paste = { ["+"] = paste,     ["*"] = paste },
-    }
   end
-  vim.o.clipboard = 'unnamedplus'
 end)
 
 -- Misc settings.
