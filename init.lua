@@ -709,15 +709,17 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
 
+        bashls = {},
         clangd = {},
-        pyright = {},
         rust_analyzer = {},
         ts_ls = {},
-        bashls = {},
+        pyright = {},         -- basedpyright is beter, but...
+        --basedpyright = {},  -- ...requires `ensurepip` to be in your PATH
+        --gopls = {},         -- requires `go` to be in your PATH
 
         -- FIXME: do we need jdtls here?  Or are we correctly specifying a
         -- custom JDTLS install in lua/custom/plugins/nvim-jdtls.lua?
-        -- jdtls = {},
+        jdtls = {},
 
         lua_ls = {
           -- cmd = {...},
