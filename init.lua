@@ -449,6 +449,13 @@ require('lazy').setup({
       { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
       { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
     },
+    config = function()
+      -- Fix vim-tmux-navigator in :terminal.
+      vim.keymap.set('t', '<c-h>', "<c-\\><c-n><cmd>TmuxNavigateLeft<cr>")
+      vim.keymap.set('t', '<c-j>', "<c-\\><c-n><cmd>TmuxNavigateDown<cr>")
+      vim.keymap.set('t', '<c-k>', "<c-\\><c-n><cmd>TmuxNavigateUp<cr>")
+      vim.keymap.set('t', '<c-l>', "<c-\\><c-n><cmd>TmuxNavigateRight<cr>")
+    end
   },
 
   { -- Change cursorline color based on mode.
