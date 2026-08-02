@@ -178,6 +178,22 @@ vim.o.inccommand = 'split'
 -- Show which line your cursor is on.  Can spike CPU on older versions!
 vim.o.cursorline = true
 
+-- Show cursorline only for active window.
+vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
+  group = vim.api.nvim_create_augroup("custom-cursorline-onenter", { clear = true }),
+  callback = function()
+    if vim.bo.filetype == 'neo-tree' then return end
+    vim.opt_local.cursorline = vim.go.cursorline
+  end,
+})
+vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
+  group = vim.api.nvim_create_augroup("custom-cursorline-onleave", { clear = true }),
+  callback = function()
+    if vim.bo.filetype == 'neo-tree' then return end
+    vim.opt_local.cursorline = false
+  end,
+})
+
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 2
 
